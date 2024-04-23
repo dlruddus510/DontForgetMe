@@ -14,7 +14,7 @@
 #include "Components/VerticalBox.h"
 #include "Components/ProgressBar.h"
 #include "Kismet/GameplayStatics.h"
-#include "ITTGameMode.h"
+#include "DontForgetMeGameModeBase.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -67,10 +67,10 @@ void AITTCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//ê¸°ë³¸ ì²´ë ¥ ì„¤ì •
+	//±âº» Ã¼·Â ¼³Á¤
 	CurrentHealth = MaxHealth;
 
-	// ê¸°ë³¸ ìŠ¤íƒœë¯¸ë„ˆ ì„¤ì •
+	// ±âº» ½ºÅÂ¹Ì³Ê ¼³Á¤
 
 	CurrentStamina = MaxStamina;
 
@@ -79,7 +79,7 @@ void AITTCharacter::BeginPlay()
 
 	CheckForController();
 
-	LocalCollisionShape = FCollisionShape::MakeSphere(80.0f); //ì¶©ëŒ ë²”ìœ„ 50.0f ì„¤ì •
+	LocalCollisionShape = FCollisionShape::MakeSphere(80.0f); //Ãæµ¹ ¹üÀ§ 50.0f ¼³Á¤
 
 	UE_LOG(LogTemp, Error, TEXT("RespawnTest"));
 
@@ -185,17 +185,17 @@ void AITTCharacter::MoveRight(float Value)
 	}
 }
 
-//í”Œë ˆì´ì–´ ì»¨íŠ¸ë¡¤ëŸ¬ ë° Possess ì²´í¬
+//ÇÃ·¹ÀÌ¾î ÄÁÆ®·Ñ·¯ ¹× Possess Ã¼Å©
 void AITTCharacter::CheckForController()
 {
 	if (GetController() != nullptr)
 	{
-		// ì»¨íŠ¸ë¡¤ëŸ¬ê°€ ìˆì„ ê²½ìš° ìœ„ì ¯ ìƒì„± ë¡œì§ ì‹¤í–‰
+		// ÄÁÆ®·Ñ·¯°¡ ÀÖÀ» °æ¿ì À§Á¬ »ı¼º ·ÎÁ÷ ½ÇÇà
 		CreateHealthBar();
 	}
 	else
 	{
-		// ì»¨íŠ¸ë¡¤ëŸ¬ê°€ ì—†ì„ ê²½ìš° 0.01ì´ˆ í›„ ë‹¤ì‹œ í™•ì¸
+		// ÄÁÆ®·Ñ·¯°¡ ¾øÀ» °æ¿ì 0.01ÃÊ ÈÄ ´Ù½Ã È®ÀÎ
 		FTimerHandle UnusedHandle;
 		GetWorldTimerManager().SetTimer(UnusedHandle, this, &AITTCharacter::CheckForController, 0.01f, false);
 	}
@@ -203,18 +203,18 @@ void AITTCharacter::CheckForController()
 
 void AITTCharacter::CheckIfPossessed()
 {
-	// ì´ ìºë¦­í„°ê°€ ì•„ë¬´ ì»¨íŠ¸ë¡¤ëŸ¬ì—ë„ ì†Œìœ ë˜ì§€ ì•Šì•˜ë‹¤ë©´
+	// ÀÌ Ä³¸¯ÅÍ°¡ ¾Æ¹« ÄÁÆ®·Ñ·¯¿¡µµ ¼ÒÀ¯µÇÁö ¾Ê¾Ò´Ù¸é
 	if (GetController() == nullptr)
 	{
-		// ìºë¦­í„° ì‚­ì œ
+		// Ä³¸¯ÅÍ »èÁ¦
 		Destroy();
 	}
 }
 
-//í”Œë ˆì´ì–´ ì¶©ëŒ ë²”ìœ„ ì²´í¬
+//ÇÃ·¹ÀÌ¾î Ãæµ¹ ¹üÀ§ Ã¼Å©
 FVector AITTCharacter::GetForwardLocation(float Distance)
 {
-	FVector ForwardVector = GetActorForwardVector(); // ì•¡í„°ê°€ ë°”ë¼ë³´ëŠ” ë°©í–¥
+	FVector ForwardVector = GetActorForwardVector(); // ¾×ÅÍ°¡ ¹Ù¶óº¸´Â ¹æÇâ
 	ForwardVector *= Distance;
 	ForwardVector += GetActorLocation();
 
@@ -224,9 +224,9 @@ FVector AITTCharacter::GetForwardLocation(float Distance)
 bool AITTCharacter::CheckForObjectsInChannel(FVector StartLocation, FVector EndLocation, ECollisionChannel CollisionChannel, FCollisionShape CollisionShape)
 {
 	QueryParams.bTraceComplex = true;
-	QueryParams.AddIgnoredActor(this); // ìê¸° ìì‹ ì€ ì¶©ëŒì—ì„œ ë¬´ì‹œ
+	QueryParams.AddIgnoredActor(this); // ÀÚ±â ÀÚ½ÅÀº Ãæµ¹¿¡¼­ ¹«½Ã
 
-	// SweepSingleByChannelì„ ì‚¬ìš©í•˜ì—¬ ì§€ì •ëœ ë²”ìœ„ì™€ ì±„ë„ì—ì„œ ì˜¤ë¸Œì íŠ¸ê°€ ìˆëŠ”ì§€ í™•ì¸
+	// SweepSingleByChannelÀ» »ç¿ëÇÏ¿© ÁöÁ¤µÈ ¹üÀ§¿Í Ã¤³Î¿¡¼­ ¿ÀºêÁ§Æ®°¡ ÀÖ´ÂÁö È®ÀÎ
 	bool bIsObjectFound = GetWorld()->SweepSingleByChannel(
 		OutHit,
 		StartLocation,
@@ -237,7 +237,7 @@ bool AITTCharacter::CheckForObjectsInChannel(FVector StartLocation, FVector EndL
 		QueryParams
 	);
 
-	return bIsObjectFound && OutHit.bBlockingHit; // ì¶©ëŒì´ ë°œìƒí–ˆëŠ”ì§€ ì—¬ë¶€ë¥¼ ë°˜í™˜
+	return bIsObjectFound && OutHit.bBlockingHit; // Ãæµ¹ÀÌ ¹ß»ıÇß´ÂÁö ¿©ºÎ¸¦ ¹İÈ¯
 }
 
 void AITTCharacter::CreateHealthBar()
@@ -255,8 +255,8 @@ void AITTCharacter::CreateHealthBar()
 			PlayerHealthBar->SetVisibility(ESlateVisibility::Visible);
 			UE_LOG(LogTemp, Error, TEXT("Player ID: %d"), PlayerController->PlayerState ? PlayerController->PlayerState->GetPlayerId() : -1);
 
-			// ëª¨ë“  í”Œë ˆì´ì–´ ì»¨íŠ¸ë¡¤ëŸ¬ë¥¼ ìˆœíšŒí•˜ì—¬ ê°€ì¥ ë‚®ì€ PlayerId ì°¾ê¸°
-			int32 LowestPlayerId = INT32_MAX; // ê°€ì¥ í° int ê°’ìœ¼ë¡œ ì´ˆê¸°í™”
+			// ¸ğµç ÇÃ·¹ÀÌ¾î ÄÁÆ®·Ñ·¯¸¦ ¼øÈ¸ÇÏ¿© °¡Àå ³·Àº PlayerId Ã£±â
+			int32 LowestPlayerId = INT32_MAX; // °¡Àå Å« int °ªÀ¸·Î ÃÊ±âÈ­
 			for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
 			{
 				APlayerController* IterPlayerController = Iterator->Get();
@@ -270,31 +270,31 @@ void AITTCharacter::CreateHealthBar()
 				}
 			}
 
-			// í˜„ì¬ PlayerControllerì˜ PlayerId
+			// ÇöÀç PlayerControllerÀÇ PlayerId
 			int32 CurrentPlayerId = PlayerController->PlayerState ? PlayerController->PlayerState->GetPlayerId() : -1;
 
-			// UI ìœ„ì¹˜ ì„¤ì •
+			// UI À§Ä¡ ¼³Á¤
 			float NewX, NewY;
 			FVector2D ViewportSize;
 			if (GEngine && GEngine->GameViewport)
 			{
 				GEngine->GameViewport->GetViewportSize(ViewportSize);
-				// ê¸°ì¡´ í”Œë ˆì´ì–´ì˜ ê²½ìš°
+				// ±âÁ¸ ÇÃ·¹ÀÌ¾îÀÇ °æ¿ì
 				if (CurrentPlayerId == LowestPlayerId)
 				{
-					NewX = (-(ViewportSize.X / 2.0f)) -250;
+					NewX = (-(ViewportSize.X / 2.0f)) - 250;
 					UE_LOG(LogTemp, Error, TEXT("NewX : %f"), ViewportSize.X);
 					NewY = ViewportSize.Y - (ViewportSize.Y / 5.f);
 				}
-				else // ë‚˜ì¤‘ì— ì¶”ê°€ëœ í”Œë ˆì´ì–´ì˜ ê²½ìš°
+				else // ³ªÁß¿¡ Ãß°¡µÈ ÇÃ·¹ÀÌ¾îÀÇ °æ¿ì
 				{
-					NewX = (ViewportSize.X / 2.0f) - 250; // í™”ë©´ì˜ ì˜¤ë¥¸ìª½ ì¤‘ê°„
+					NewX = (ViewportSize.X / 2.0f) - 250; // È­¸éÀÇ ¿À¸¥ÂÊ Áß°£
 					NewY = ViewportSize.Y - (ViewportSize.Y / 5.f);
 				}
 
 				FVector2D NewPosition(NewX, NewY);
 
-				// VerticalBoxì˜ CanvasPanelSlotì„ ì°¾ì•„ ìœ„ì¹˜ë¥¼ ì¡°ì •í•©ë‹ˆë‹¤.
+				// VerticalBoxÀÇ CanvasPanelSlotÀ» Ã£¾Æ À§Ä¡¸¦ Á¶Á¤ÇÕ´Ï´Ù.
 				UVerticalBox* MyVerticalBox = Cast<UVerticalBox>(PlayerHealthBar->GetWidgetFromName(TEXT("MyVerticalBox")));
 				if (MyVerticalBox)
 				{
@@ -309,7 +309,7 @@ void AITTCharacter::CreateHealthBar()
 	}
 }
 
-//ì²´ë ¥ ë° ìŠ¤íƒœë¯¸ë‚˜ ê´€ë¦¬
+//Ã¼·Â ¹× ½ºÅÂ¹Ì³ª °ü¸®
 void AITTCharacter::UpdateHealth()
 {
 	CurrentHealth = FMath::Clamp(CurrentHealth, 0.f, MaxHealth);
@@ -331,19 +331,19 @@ void AITTCharacter::UpdateStamina()
 
 	if (PlayerHealthBar)
 	{
-		UProgressBar* StaminaBar = Cast<UProgressBar>(PlayerHealthBar->GetWidgetFromName(TEXT("ProgressBar_stamina"))); // ProgressBar_StaminaëŠ” ìŠ¤íƒœë¯¸ë„ˆ ë°”ì˜ ì´ë¦„ì…ë‹ˆë‹¤.
+		UProgressBar* StaminaBar = Cast<UProgressBar>(PlayerHealthBar->GetWidgetFromName(TEXT("ProgressBar_stamina"))); // ProgressBar_Stamina´Â ½ºÅÂ¹Ì³Ê ¹ÙÀÇ ÀÌ¸§ÀÔ´Ï´Ù.
 		if (StaminaBar)
 		{
 			StaminaBar->SetPercent(CurrentStamina / MaxStamina);
 
 			if (CurrentStamina <= 1.0f)
 			{
-				FLinearColor NewColor = FLinearColor(1.0f, 0.0f, 0.0f, 1.0f); // RGB ìƒ‰ìƒ ì½”ë“œ + ì•ŒíŒŒ(íˆ¬ëª…ë„) ê°’
+				FLinearColor NewColor = FLinearColor(1.0f, 0.0f, 0.0f, 1.0f); // RGB »ö»ó ÄÚµå + ¾ËÆÄ(Åõ¸íµµ) °ª
 				StaminaBar->SetFillColorAndOpacity(NewColor);
 			}
 			if (CurrentStamina > 1.0f)
 			{
-				FLinearColor NewColor = FLinearColor(0.5f, 1.0f, 0.27f, 1.0f); // RGB ìƒ‰ìƒ ì½”ë“œ + ì•ŒíŒŒ(íˆ¬ëª…ë„) ê°’
+				FLinearColor NewColor = FLinearColor(0.5f, 1.0f, 0.27f, 1.0f); // RGB »ö»ó ÄÚµå + ¾ËÆÄ(Åõ¸íµµ) °ª
 				StaminaBar->SetFillColorAndOpacity(NewColor);
 			}
 		}
@@ -353,16 +353,16 @@ void AITTCharacter::UpdateStamina()
 void AITTCharacter::DecreaseStamina(float StaminaAmount)
 {
 
-	CurrentStamina -= StaminaAmount; // ì˜ˆ: ë‹¬ë¦¬ê¸°ë¡œ ì¸í•œ ìŠ¤íƒœë¯¸ë„ˆ ê°ì†Œ
+	CurrentStamina -= StaminaAmount; // ¿¹: ´Ş¸®±â·Î ÀÎÇÑ ½ºÅÂ¹Ì³Ê °¨¼Ò
 	if (CurrentStamina <= 0.2)
 	{
 		CurrentStamina = 0;
 		bIsStaminaDepleted = true;
-		StopRunning(); // ìŠ¤íƒœë¯¸ë„ˆê°€ ë‹¤ ì†Œì§„ë˜ë©´ ë‹¬ë¦¬ê¸° ì¤‘ì§€
-		// ìŠ¬ë¡œìš° ìƒíƒœë¡œ ì „í™˜
+		StopRunning(); // ½ºÅÂ¹Ì³Ê°¡ ´Ù ¼ÒÁøµÇ¸é ´Ş¸®±â ÁßÁö
+		// ½½·Î¿ì »óÅÂ·Î ÀüÈ¯
 		if (UCharacterMovementComponent* CharMovement = GetCharacterMovement())
 		{
-			CharMovement->MaxWalkSpeed /= 2; // ì´ë™ ì†ë„ë¥¼ ì ˆë°˜ìœ¼ë¡œ ì¤„ì„
+			CharMovement->MaxWalkSpeed /= 2; // ÀÌµ¿ ¼Óµµ¸¦ Àı¹İÀ¸·Î ÁÙÀÓ
 		}
 		GetWorld()->GetTimerManager().SetTimer(SlowStateTimer, this, &AITTCharacter::RestoreWalkSpeed, SlowDuration, false);
 	}
@@ -389,7 +389,7 @@ void AITTCharacter::RestoreWalkSpeed()
 	{
 		if (bIsStaminaDepleted && CurrentStamina >= 1)
 		{
-			CharMovement->MaxWalkSpeed *= 2; // ì´ë™ ì†ë„ë¥¼ ì›ë˜ëŒ€ë¡œ ë³µêµ¬
+			CharMovement->MaxWalkSpeed *= 2; // ÀÌµ¿ ¼Óµµ¸¦ ¿ø·¡´ë·Î º¹±¸
 			bIsStaminaDepleted = false;
 		}
 	}
@@ -412,20 +412,20 @@ float AITTCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& D
 	UpdateHealth();
 	if (CurrentHealth <= 0.f)
 	{
-		Die();
+	//	Die();
 	}
 	return ActualDamage;
 }
 
-//ë‹¬ë¦¬ê¸° ë° ìƒí˜¸ì‘ìš©
+//´Ş¸®±â ¹× »óÈ£ÀÛ¿ë
 
 void AITTCharacter::StartRunning()
 {
 	if (CurrentStamina > 0 && !bIsRunning && !bIsStaminaDepleted)
 	{
 		bIsRunning = true;
-		GetCharacterMovement()->MaxWalkSpeed = 600.0f; // ì´ë™ ì†ë„ ì¦ê°€
-		// ë‹¬ë¦¬ê¸° ì‹œì‘í•  ë•Œ ìŠ¤íƒœë¯¸ë„ˆ ê°ì†Œ ì‹œì‘
+		GetCharacterMovement()->MaxWalkSpeed = 600.0f; // ÀÌµ¿ ¼Óµµ Áõ°¡
+		// ´Ş¸®±â ½ÃÀÛÇÒ ¶§ ½ºÅÂ¹Ì³Ê °¨¼Ò ½ÃÀÛ
 		GetWorld()->GetTimerManager().SetTimer(StaminaDecreaseStaminaForRunning, this, &AITTCharacter::DecreaseStaminaRunning, 0.1f, true);
 	}
 }
@@ -435,8 +435,8 @@ void AITTCharacter::StopRunning()
 	if (bIsRunning)
 	{
 		bIsRunning = false;
-		GetCharacterMovement()->MaxWalkSpeed = 250.0f; // ì´ë™ ì†ë„ ë³µì›
-		// ë‹¬ë¦¬ê¸° ì¤‘ì§€ ì‹œ ìŠ¤íƒœë¯¸ë„ˆ ê°ì†Œ ì¤‘ì§€
+		GetCharacterMovement()->MaxWalkSpeed = 250.0f; // ÀÌµ¿ ¼Óµµ º¹¿ø
+		// ´Ş¸®±â ÁßÁö ½Ã ½ºÅÂ¹Ì³Ê °¨¼Ò ÁßÁö
 		GetWorld()->GetTimerManager().ClearTimer(StaminaDecreaseStaminaForRunning);
 	}
 }
@@ -447,7 +447,7 @@ void AITTCharacter::Interactive()
 	FVector EndLocation = GetForwardLocation(100.0f);
 	if (CheckForObjectsInChannel(StartLocation, EndLocation, ECC_GameTraceChannel2, LocalCollisionShape))
 	{
-		InteractableActor = Cast<IInteractable>(OutHit.GetActor());
+		InteractableActor = Cast<IInterfaceInteractable>(OutHit.GetActor());
 		if (InteractableActor)
 		{
 			InteractableActor->Interact(MyCharacter);
@@ -455,18 +455,18 @@ void AITTCharacter::Interactive()
 	}
 }
 
-//í”Œë ˆì´ì–´ ì£½ìŒ ì²˜ë¦¬
-void AITTCharacter::Die()
-{
-	// ìºë¦­í„°ì˜ ì£½ìŒ ì²˜ë¦¬ ë¡œì§
-
-	// ê²Œì„ ëª¨ë“œì— ì£½ìŒ ì•Œë¦¬ê¸°
-	AITTGameMode* GM = Cast<AITTGameMode>(UGameplayStatics::GetGameMode(this));
-	if (GM != nullptr)
-	{
-		GM->PlayerDied(GetController());
-		UE_LOG(LogTemp, Error, TEXT("Die"));
-		Destroy();
-	}
-}
+//ÇÃ·¹ÀÌ¾î Á×À½ Ã³¸®
+//void AITTCharacter::Die()
+//{
+//	// Ä³¸¯ÅÍÀÇ Á×À½ Ã³¸® ·ÎÁ÷
+//
+//	// °ÔÀÓ ¸ğµå¿¡ Á×À½ ¾Ë¸®±â
+//	ADontForgetMeGameModeBase* GM = Cast<AITTGameMode>(UGameplayStatics::GetGameMode(this));
+//	if (GM != nullptr)
+//	{
+//		GM->PlayerDied(GetController());
+//		UE_LOG(LogTemp, Error, TEXT("Die"));
+//		Destroy();
+//	}
+//}
 

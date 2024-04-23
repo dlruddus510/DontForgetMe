@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Interactable.h"
+#include "InterfaceInteractable.h"
 #include "InterfaceGrip.h"
 #include "GameFramework/Character.h"
 #include "ITTCharacter.generated.h"
@@ -13,68 +13,68 @@ class AITTCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-	/** Camera boom positioning the camera behind the character */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
+		/** Camera boom positioning the camera behind the character */
+		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class USpringArmComponent* CameraBoom;
 
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FollowCamera;
+		class UCameraComponent* FollowCamera;
 public:
 	AITTCharacter();
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Input)
-	float TurnRateGamepad;
+		float TurnRateGamepad;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Health")
-	float MaxHealth = 5.0f;	// ìµœëŒ€ ì²´ë ¥ì„ ìœ„í•œ ë³€ìˆ˜
+		float MaxHealth = 5.0f;	// ÃÖ´ë Ã¼·ÂÀ» À§ÇÑ º¯¼ö
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Health")
-	float CurrentHealth; // í˜„ì¬ ì²´ë ¥
+		float CurrentHealth; // ÇöÀç Ã¼·Â
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stamina")
-	float CurrentStamina;
+		float CurrentStamina;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
-	float MaxStamina = 10.0f;
+		float MaxStamina = 10.0f;
 
-	// UI ìœ„ì ¯ í´ë˜ìŠ¤ì˜ ì°¸ì¡°
+	// UI À§Á¬ Å¬·¡½ºÀÇ ÂüÁ¶
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<UUserWidget> PlayerHealthBarClass;
+		TSubclassOf<UUserWidget> PlayerHealthBarClass;
 
-	// UI ìœ„ì ¯ ì¸ìŠ¤í„´ìŠ¤
+	// UI À§Á¬ ÀÎ½ºÅÏ½º
 	UPROPERTY()
-	UUserWidget* PlayerHealthBar;
+		UUserWidget* PlayerHealthBar;
 
-	FTimerHandle SlowStateTimer; //ìŠ¬ë¡œìš° ì‹œê°„ íƒ€ì´ë¨¸í•¸ë“¤
-
-	UFUNCTION()
-	// ì²´ë ¥ ì—…ë°ì´íŠ¸ í•¨ìˆ˜
-	void UpdateHealth();
+	FTimerHandle SlowStateTimer; //½½·Î¿ì ½Ã°£ Å¸ÀÌ¸ÓÇÚµé
 
 	UFUNCTION()
-	void UpdateStamina();
+		// Ã¼·Â ¾÷µ¥ÀÌÆ® ÇÔ¼ö
+		void UpdateHealth();
+
+	UFUNCTION()
+		void UpdateStamina();
 
 
-	// ìŠ¤íƒœë¯¸ë„ˆ íšŒë³µ ê´€ë ¨ ë³€ìˆ˜
-	const float StaminaRecoveryRate = 0.2f; //5ì´ˆì— 1íšŒë³µ
+	// ½ºÅÂ¹Ì³Ê È¸º¹ °ü·Ã º¯¼ö
+	const float StaminaRecoveryRate = 0.2f; //5ÃÊ¿¡ 1È¸º¹
 
-	const float SlowStaminaRecoveryRate = 0.1f; //10ì´ˆì— 1íšŒë³µ
+	const float SlowStaminaRecoveryRate = 0.1f; //10ÃÊ¿¡ 1È¸º¹
 
 	bool bIsStaminaDepleted;
 
-	// ìŠ¤íƒœë¯¸ë„ˆ íšŒë³µ í•¨ìˆ˜
+	// ½ºÅÂ¹Ì³Ê È¸º¹ ÇÔ¼ö
 	UFUNCTION()
-	void RecoverStamina(float DeltaTime);
+		void RecoverStamina(float DeltaTime);
 
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
-	void RestoreWalkSpeed(); // ì´ë™ ì†ë„ë¥¼ ì›ë˜ëŒ€ë¡œ ë³µêµ¬í•˜ëŠ” í•¨ìˆ˜
+	void RestoreWalkSpeed(); // ÀÌµ¿ ¼Óµµ¸¦ ¿ø·¡´ë·Î º¹±¸ÇÏ´Â ÇÔ¼ö
 
-	// ì‚¬ë§ ì²˜ë¦¬ í•¨ìˆ˜
-	void Die();
+	// »ç¸Á Ã³¸® ÇÔ¼ö
+	//void Die();
 
 	bool bIsRunning = false;
 
@@ -82,23 +82,23 @@ public:
 
 
 protected:
-	//===============ë³€ìˆ˜===============
+	//===============º¯¼ö===============
 	FHitResult OutHit;
 
 	FCollisionQueryParams QueryParams;
 
-	IInteractable* InteractableActor;
+	IInterfaceInteractable* InteractableActor;
 
 	AActor* AttachedActor;
 
-	FCollisionShape LocalCollisionShape; //ì¶©ëŒë²”ìœ„
+	FCollisionShape LocalCollisionShape; //Ãæµ¹¹üÀ§
 
 	ACharacter* MyCharacter;
 
-	// ì£½ìŒ íšŸìˆ˜ë¥¼ ì¶”ì í•˜ëŠ” ë³€ìˆ˜
+	// Á×À½ È½¼ö¸¦ ÃßÀûÇÏ´Â º¯¼ö
 	int32 DeathCount = 0;
 
-	FVector TargetLocation; // ì´ë™ ëª©í‘œ ìœ„ì¹˜
+	FVector TargetLocation; // ÀÌµ¿ ¸ñÇ¥ À§Ä¡
 
 	bool bIsStaminaRecovering;
 
@@ -112,22 +112,22 @@ protected:
 
 	FTimerHandle StaminaRecoveryTimer;
 
-	const float SlowDuration = 10.0f; //ìŠ¬ë¡œìš° ìƒíƒœ ì‹œê°„
+	const float SlowDuration = 10.0f; //½½·Î¿ì »óÅÂ ½Ã°£
 
 	//float StaminaAmount;
 
 
-	//===============í•¨ìˆ˜===============
+	//===============ÇÔ¼ö===============
 
 	void CheckIfPossessed();
 
-	void SetStaminaRecovery(bool bSlowRecovery);
+	//void SetStaminaRecovery(bool bSlowRecovery);
 
 	void StartRunning();
 
 	void StopRunning();
 
-	void AdjustMovementSpeed();
+	//void AdjustMovementSpeed();
 
 	void DecreaseStamina(float StaminaAmount);
 
@@ -135,13 +135,13 @@ protected:
 
 	void RecoverStamina();
 
-	void CheckStaminaStatus();
+	//void CheckStaminaStatus();
 
-	void CheckForController(); //ì»¨íŠ¸ë¡¤ëŸ¬ í• ë‹¹ í™•ì¸ í•¨ìˆ˜
+	void CheckForController(); //ÄÁÆ®·Ñ·¯ ÇÒ´ç È®ÀÎ ÇÔ¼ö
 
-	void CreateHealthBar(); //ì²´ë ¥ë°” ìƒì„± í•¨ìˆ˜
+	void CreateHealthBar(); //Ã¼·Â¹Ù »ı¼º ÇÔ¼ö
 
-	void Interactive(); //ìƒí˜¸ì‘ìš©
+	void Interactive(); //»óÈ£ÀÛ¿ë
 
 	bool CheckForObjectsInChannel(FVector StartLocation, FVector EndLocation, ECollisionChannel CollisionChannel, FCollisionShape CollisionShape);
 
@@ -169,7 +169,7 @@ protected:
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
-	FVector GetForwardLocation(float Distance); //ì •ë©´ ì‹œì  ê³„ì‚°
+	FVector GetForwardLocation(float Distance); //Á¤¸é ½ÃÁ¡ °è»ê
 
 protected:
 	// APawn interface
