@@ -25,9 +25,9 @@ class DONTFORGETME_API ABearCharacter : public AITTCharacter
 
 	IInterfaceGrip* GrippableActor;
 
-	void GripAndDrop(); //µé±â&³õ±â
+	void GripAndDrop(); //ï¿½ï¿½ï¿½&ï¿½ï¿½ï¿½ï¿½
 
-	void Throw(); //´øÁö±â
+	void Throw(); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	
 protected:
@@ -38,5 +38,5 @@ protected:
 public:
 	
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Grip")
-	bool bisGrip;  //¾Ö´Ï¸ÞÀÌ¼ÇÀ» À§ÇÑ ÀÓ½Ãº¯¼ö
+	bool bisGrip;  //ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ó½Ãºï¿½ï¿½ï¿½
 };
