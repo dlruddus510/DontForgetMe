@@ -19,7 +19,7 @@ class DONTFORGETME_API ABearCharacter : public AITTCharacter
 
 	virtual void BeginPlay() override;
 
-	virtual void Tick(float DeltaTime) override;
+	//virtual void Tick(float DeltaTime) override;
 
 	void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
