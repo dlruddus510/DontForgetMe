@@ -15,7 +15,7 @@ class DONTFORGETME_API ABearCharacter : public AITTCharacter
 	GENERATED_BODY()
 
 
-	ABearCharacter();
+	//ABearCharacter();
 
 	virtual void BeginPlay() override;
 

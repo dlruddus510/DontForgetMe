@@ -2,11 +2,6 @@
 
 #include "BearCharacter.h"
 
-ABearCharacter::ABearCharacter()
-{
-	// Set this character to call Tick() every frame.
-	PrimaryActorTick.bCanEverTick = true;
-}
 
 //잡고 던지기
 void ABearCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -26,12 +21,6 @@ void ABearCharacter::BeginPlay()
 	bisGrip = false;
 	
 }
-
-void ABearCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
 
 void ABearCharacter::GripAndDrop()
 {
