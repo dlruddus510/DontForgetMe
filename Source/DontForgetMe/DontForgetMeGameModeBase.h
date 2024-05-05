@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "Camera/CameraActor.h"
 #include "DontForgetMeGameModeBase.generated.h"
 
 /**
@@ -13,5 +14,5 @@ UCLASS()
 class DONTFORGETME_API ADontForgetMeGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+
 };
