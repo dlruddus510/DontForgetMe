@@ -39,4 +39,7 @@ public:
 	
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Grip")
 	bool bisGrip;  //애니메이션을 위한 임시변수
+
+	UFUNCTION(BlueprintCallable, Category = "Material")
+	void MaterialChange();
 };
