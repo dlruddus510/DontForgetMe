@@ -10,6 +10,7 @@ UPuzzleBlockComponent::UPuzzleBlockComponent()
     PrimaryComponentTick.bCanEverTick = true;
 
     bInPlace = false;
+    bInPlaceandShape = false;
     bisOverlap = false;
 }
 
@@ -48,6 +49,7 @@ void UPuzzleBlockComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 
     // Check if the block is in place
     CheckIfInPlace();
+    CheckIfShape();
 }
 
 void UPuzzleBlockComponent::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -71,8 +73,7 @@ void UPuzzleBlockComponent::CheckIfInPlace()
 {
     if (OverlappingBoard &&
         GetOwner()->GetActorLocation().Equals(OverlappingBoard->TargetLocation, 20.0f) &&
-        GetOwner()->GetActorRotation().Equals(OverlappingBoard->TargetRotation, 20.0f) &&
-        BlockShape == OverlappingBoard->TargetShape)
+        GetOwner()->GetActorRotation().Equals(OverlappingBoard->TargetRotation, 20.0f) )
     {
         bInPlace = true;
         // Optionally notify the puzzle system that this block is in place
@@ -86,4 +87,16 @@ bool UPuzzleBlockComponent::IsInPlace() const
 bool UPuzzleBlockComponent::IsOverlap() const
 {
     return bisOverlap;
+}
+
+void UPuzzleBlockComponent::CheckIfShape()
+{
+    if (OverlappingBoard && bInPlace && BlockShape == OverlappingBoard->TargetShape)
+    {
+        bInPlaceandShape = true;
+    }
+}
+bool UPuzzleBlockComponent::IsInPlaceAndShape() const
+{
+    return bInPlaceandShape;
 }

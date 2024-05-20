@@ -31,6 +31,9 @@ public:
         bool IsInPlace() const;
 
     UFUNCTION(BlueprintCallable, Category = "PuzzleBlock")
+        bool IsInPlaceAndShape() const;
+
+    UFUNCTION(BlueprintCallable, Category = "PuzzleBlock")
         bool IsOverlap() const;
 
 protected:
@@ -43,6 +46,7 @@ private:
     FVector InitialLocation;
     FRotator InitialRotation;
     bool bInPlace;
+    bool bInPlaceandShape;
 
     bool bisOverlap;
 
@@ -50,6 +54,8 @@ private:
         EPuzzleBlockShape BlockShape;
 
     void CheckIfInPlace();
+    void CheckIfShape();
+
     UFUNCTION()
         void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult); // 오버랩 이벤트 핸들러 추가
 };
