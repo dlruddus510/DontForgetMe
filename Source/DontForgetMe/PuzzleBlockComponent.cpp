@@ -72,8 +72,8 @@ void UPuzzleBlockComponent::OnOverlapBegin(UPrimitiveComponent* OverlappedCompon
 void UPuzzleBlockComponent::CheckIfInPlace()
 {
     if (OverlappingBoard &&
-        GetOwner()->GetActorLocation().Equals(OverlappingBoard->TargetLocation, 20.0f) &&
-        GetOwner()->GetActorRotation().Equals(OverlappingBoard->TargetRotation, 20.0f) )
+        GetOwner()->GetActorLocation().Equals(OverlappingBoard->TargetLocation, 15.0f) &&
+        GetOwner()->GetActorRotation().Equals(OverlappingBoard->TargetRotation, 15.0f) )
     {
         bInPlace = true;
         // Optionally notify the puzzle system that this block is in place
