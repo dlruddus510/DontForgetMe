@@ -45,8 +45,6 @@ void UPuzzleBlockComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-    UE_LOG(LogTemp, Warning, TEXT("Tick"));
-
     // Check if the block is in place
     CheckIfInPlace();
     CheckIfShape();
@@ -76,6 +74,7 @@ void UPuzzleBlockComponent::CheckIfInPlace()
         GetOwner()->GetActorRotation().Equals(OverlappingBoard->TargetRotation, 15.0f) )
     {
         bInPlace = true;
+        UE_LOG(LogTemp, Warning, TEXT("bInPlace = true"));
         // Optionally notify the puzzle system that this block is in place
     }
 }
