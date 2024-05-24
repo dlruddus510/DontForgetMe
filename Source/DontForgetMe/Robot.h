@@ -3,13 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameFramework/Character.h"
 #include "InterfaceInteractable.h"
 #include "InterfaceGrip.h"
-#include "GameFramework/Character.h"
-#include "ITTCharacter.generated.h"
+#include "Components/BoxComponent.h"
+#include "TimerManager.h"
+#include "Robot.generated.h"
 
 UCLASS(config = Game)
-class AITTCharacter : public ACharacter
+class ARobot : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -21,7 +23,7 @@ class AITTCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* FollowCamera;
 public:
-	AITTCharacter();
+	ARobot();
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Input)
@@ -56,6 +58,9 @@ public:
 	UFUNCTION()
 		void UpdateStamina();
 
+	// 사망 처리 함수
+	//void Die();
+
 
 	// 스태미너 회복 관련 변수
 	const float StaminaRecoveryRate = 0.2f; //5초에 1회복
@@ -72,24 +77,12 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	void RestoreWalkSpeed(); // 이동 속도를 원래대로 복구하는 함수
-
-	// 사망 처리 함수
-	//void Die();
-
-	bool bIsRunning = false;
-
-	void CheckJumpStamina();
-
-	// 자기장 영향 변수
-	bool bIsSpeedBoosted = false;
-
-
 protected:
 	//===============변수===============
 	FHitResult OutHit;
 
 	FCollisionQueryParams QueryParams;
-
+	
 	IInterfaceInteractable* InteractableActor;
 
 	AActor* AttachedActor;
@@ -118,6 +111,7 @@ protected:
 	const float SlowDuration = 10.0f; //슬로우 상태 시간
 
 	//float StaminaAmount;
+	bool bIsSpeedBoosted;
 
 
 	//===============함수===============
@@ -148,6 +142,14 @@ protected:
 
 	bool CheckForObjectsInChannel(FVector StartLocation, FVector EndLocation, ECollisionChannel CollisionChannel, FCollisionShape CollisionShape);
 
+	FVector GetForwardLocation(float Distance); //정면 시점 계산
+
+	void IncreaseMovementSpeed();
+
+	void ResetMovementSpeed();
+
+protected:
+
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
 
@@ -172,21 +174,13 @@ protected:
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
-	FVector GetForwardLocation(float Distance); //정면 시점 계산
+	virtual void BeginPlay();
 
-public:
-
-	void IncreaseMovementSpeed(); // 자기장 영항 받는 함수
-	
-	void ResetMovementSpeed();
+	virtual void Tick(float DeltaTime) override;
 
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	virtual void BeginPlay();
-
-	virtual void Tick(float DeltaTime) override;
 	// End of APawn interface
 
 public:
@@ -194,5 +188,52 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+public:
+
+	bool bIsRunning = false;
+
+public:
+	void IncreaseSpeedAndJump();
+	void NormalizeSpeedAndJump();
+	void ResetEffect();
+	void HideMagneticField();
+	void ToggleMagneticField();
+	void DisableMagneticField();
+
+protected:
+	UPROPERTY(VisibleAnywhere)
+		UStaticMeshComponent* MagneticField;
+
+private:
+	float DefaultSpeed;
+	float DefaultJumpZVelocity;
+	bool bIsEffectActive;
+
+	FTimerHandle FieldVisibilityTimerHandle;
+	FTimerHandle EffectTimerHandle;
+	FTimerHandle MagneticFieldTimerHandle;
+
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Magnetic Field")
+		bool bIsInMagneticField;
+
+	UPROPERTY(VisibleAnywhere, Category = "Magnetic Field")
+		bool bIsMagneticFieldActive;
+
+	// 자기장에 캐릭터가 진입했을 때 호출되는 함수
+	UFUNCTION()
+		void OnFieldEnter(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	// 자기장에서 캐릭터가 벗어났을 때 호출되는 함수
+	UFUNCTION()
+		void OnFieldExit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	FTimerHandle SpeedResetTimerHandle;  // 이동 속도 및 점프력 증가 상태를 원래대로 복구하기 위한 타이머 핸들
+
+public:
+
+	void CheckMagneticField();
+	// 자기장 활성화 상태를 반환
+	bool IsMagneticFieldActive() const;
 };
 

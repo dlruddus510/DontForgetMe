@@ -1,32 +1,27 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
+#include "Robot.h"
 #include "ITTCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "TimerManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "GameFramework/PlayerState.h"
-#include "Blueprint/UserWidget.h"
-#include "TimerManager.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/VerticalBox.h"
 #include "Components/ProgressBar.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/PlayerState.h"
+#include "Blueprint/UserWidget.h"
 #include "DontForgetMeGameModeBase.h"
 
-
 //////////////////////////////////////////////////////////////////////////
-// AITTCharacter
+// ARobot
 
-AITTCharacter::AITTCharacter()
+ARobot::ARobot()
 {
-	PrimaryActorTick.bCanEverTick = true;
-
-	// Set size for collision capsule
-	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-
 	// set our turn rate for input
 	TurnRateGamepad = 50.f;
 
@@ -47,7 +42,6 @@ AITTCharacter::AITTCharacter()
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
-<<<<<<< Updated upstream
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -62,11 +56,24 @@ AITTCharacter::AITTCharacter()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
-=======
->>>>>>> Stashed changes
-}
+	// 기본 이동 및 점프 속도 저장
+	DefaultSpeed = GetCharacterMovement()->MaxWalkSpeed;
+	DefaultJumpZVelocity = GetCharacterMovement()->JumpZVelocity;
+	bIsEffectActive = false;
 
-void AITTCharacter::BeginPlay()
+	// 자기장 시각적 표현을 위한 StaticMeshComponent 생성 및 설정
+	MagneticField = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MagneticField"));
+	MagneticField->SetupAttachment(RootComponent);
+	MagneticField->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	MagneticField->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+	MagneticField->SetVisibility(false);
+
+	bIsInMagneticField = false;
+	bIsMagneticFieldActive = false;
+
+
+}
+void ARobot::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -79,20 +86,35 @@ void AITTCharacter::BeginPlay()
 	bIsStaminaDepleted = false;
 	bIsRunning = false;
 
-	CheckForController();
+	GetWorld()->GetTimerManager().SetTimer(PossessCheckTimerHandle, this, &ARobot::CheckIfPossessed, 0.1f, false);
 
-	LocalCollisionShape = FCollisionShape::MakeSphere(80.0f); //충돌 범위 50.0f 설정
+	MagneticField->OnComponentBeginOverlap.AddDynamic(this, &ARobot::OnFieldEnter);
+	MagneticField->OnComponentEndOverlap.AddDynamic(this, &ARobot::OnFieldExit);
 
-	UE_LOG(LogTemp, Error, TEXT("RespawnTest"));
-
-	//GetWorld()->GetTimerManager().SetTimer(StaminaRecoveryTimer, this, &AITTCharacter::RecoverStamina, NormalRecoveryTime, true);
-
-	GetWorld()->GetTimerManager().SetTimer(PossessCheckTimerHandle, this, &AITTCharacter::CheckIfPossessed, 0.3f, false);
-
-	UpdateHealth();
 }
 
-void AITTCharacter::Tick(float DeltaTime)
+void ARobot::OnFieldEnter(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	AITTCharacter* OtherCharacter = Cast<AITTCharacter>(OtherActor);
+	if (OtherCharacter)
+	{
+		OtherCharacter->IncreaseMovementSpeed();
+	}
+}
+
+void ARobot::OnFieldExit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	AITTCharacter* OtherCharacter = Cast<AITTCharacter>(OtherActor);
+	if (OtherCharacter)
+	{
+		//OtherCharacter->ResetMovementSpeed();
+
+		FTimerHandle TimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, OtherCharacter, &AITTCharacter::ResetMovementSpeed, 5.0f, false);
+	}
+}
+
+void ARobot::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
@@ -105,60 +127,60 @@ void AITTCharacter::Tick(float DeltaTime)
 //////////////////////////////////////////////////////////////////////////
 // Input
 
-void AITTCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+void ARobot::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AITTCharacter::CheckJumpStamina);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
-	PlayerInputComponent->BindAxis("Move Forward / Backward", this, &AITTCharacter::MoveForward);
-	PlayerInputComponent->BindAxis("Move Right / Left", this, &AITTCharacter::MoveRight);
+	PlayerInputComponent->BindAxis("Move Forward / Backward", this, &ARobot::MoveForward);
+	PlayerInputComponent->BindAxis("Move Right / Left", this, &ARobot::MoveRight);
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
 	PlayerInputComponent->BindAxis("Turn Right / Left Mouse", this, &APawn::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("Turn Right / Left Gamepad", this, &AITTCharacter::TurnAtRate);
+	PlayerInputComponent->BindAxis("Turn Right / Left Gamepad", this, &ARobot::TurnAtRate);
 	PlayerInputComponent->BindAxis("Look Up / Down Mouse", this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("Look Up / Down Gamepad", this, &AITTCharacter::LookUpAtRate);
+	PlayerInputComponent->BindAxis("Look Up / Down Gamepad", this, &ARobot::LookUpAtRate);
+
+	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &ARobot::StartRunning);
+	PlayerInputComponent->BindAction("Run", IE_Released, this, &ARobot::StopRunning);
 
 	// handle touch devices
-	PlayerInputComponent->BindTouch(IE_Pressed, this, &AITTCharacter::TouchStarted);
-	PlayerInputComponent->BindTouch(IE_Released, this, &AITTCharacter::TouchStopped);
+	PlayerInputComponent->BindTouch(IE_Pressed, this, &ARobot::TouchStarted);
+	PlayerInputComponent->BindTouch(IE_Released, this, &ARobot::TouchStopped);
 
-	PlayerInputComponent->BindAction("Interaction", IE_Pressed, this, &AITTCharacter::Interactive);
-
-	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &AITTCharacter::StartRunning);
-
-	PlayerInputComponent->BindAction("Run", IE_Released, this, &AITTCharacter::StopRunning);
-
-	MyCharacter = this;
+	// E키 자기장
+	PlayerInputComponent->BindAction("IncreaseEffect", IE_Pressed, this, &ARobot::IncreaseSpeedAndJump);
+	PlayerInputComponent->BindAction("ToggleMagneticField", IE_Pressed, this, &ARobot::ToggleMagneticField);
+	//PlayerInputComponent->BindAction("IncreaseEffect", IE_Pressed, this, &ARobot::ServerIncreaseSpeedAndJump);
 }
 
-void AITTCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
+void ARobot::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
 {
 	Jump();
 }
 
-void AITTCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
+void ARobot::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
 {
 	StopJumping();
 }
 
-void AITTCharacter::TurnAtRate(float Rate)
+void ARobot::TurnAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerYawInput(Rate * TurnRateGamepad * GetWorld()->GetDeltaSeconds());
 }
 
-void AITTCharacter::LookUpAtRate(float Rate)
+void ARobot::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * TurnRateGamepad * GetWorld()->GetDeltaSeconds());
 }
 
-void AITTCharacter::MoveForward(float Value)
+void ARobot::MoveForward(float Value)
 {
 	if ((Controller != nullptr) && (Value != 0.0f))
 	{
@@ -172,7 +194,7 @@ void AITTCharacter::MoveForward(float Value)
 	}
 }
 
-void AITTCharacter::MoveRight(float Value)
+void ARobot::MoveRight(float Value)
 {
 	if ((Controller != nullptr) && (Value != 0.0f))
 	{
@@ -187,23 +209,31 @@ void AITTCharacter::MoveRight(float Value)
 	}
 }
 
-//플레이어 컨트롤러 및 Possess 체크
-void AITTCharacter::CheckForController()
+// 달리기
+void ARobot::StartRunning()
 {
-	if (GetController() != nullptr)
+	if (CurrentStamina > 0 && !bIsRunning && !bIsStaminaDepleted)
 	{
-		// 컨트롤러가 있을 경우 위젯 생성 로직 실행
-		CreateHealthBar();
-	}
-	else
-	{
-		// 컨트롤러가 없을 경우 0.01초 후 다시 확인
-		FTimerHandle UnusedHandle;
-		GetWorldTimerManager().SetTimer(UnusedHandle, this, &AITTCharacter::CheckForController, 0.01f, false);
+		bIsRunning = true;
+		GetCharacterMovement()->MaxWalkSpeed = 600.0f; // 이동 속도 증가
+		// 달리기 시작할 때 스태미너 감소 시작
+		GetWorld()->GetTimerManager().SetTimer(StaminaDecreaseStaminaForRunning, this, &ARobot::DecreaseStaminaRunning, 0.1f, true);
 	}
 }
 
-void AITTCharacter::CheckIfPossessed()
+void ARobot::StopRunning()
+{
+	if (bIsRunning)
+	{
+		bIsRunning = false;
+		GetCharacterMovement()->MaxWalkSpeed = 250.0f; // 이동 속도 복원
+		// 달리기 중지 시 스태미너 감소 중지
+		GetWorld()->GetTimerManager().ClearTimer(StaminaDecreaseStaminaForRunning);
+	}
+}
+
+// 로컬플레이어 중복 방지
+void ARobot::CheckIfPossessed()
 {
 	// 이 캐릭터가 아무 컨트롤러에도 소유되지 않았다면
 	if (GetController() == nullptr)
@@ -213,8 +243,83 @@ void AITTCharacter::CheckIfPossessed()
 	}
 }
 
+
+// E키 자기장
+void ARobot::IncreaseSpeedAndJump()
+{
+	if (!bIsEffectActive)
+	{
+		bIsEffectActive = true;
+		GetCharacterMovement()->MaxWalkSpeed = DefaultSpeed * 1.5f;
+		GetCharacterMovement()->JumpZVelocity = DefaultJumpZVelocity * 1.5f;
+		MagneticField->SetVisibility(true);
+
+		// 자기장을 1초 후에 비활성화
+		GetWorld()->GetTimerManager().SetTimer(FieldVisibilityTimerHandle, this, &ARobot::HideMagneticField, 1.0f, false);
+
+		// 타이머 설정하여 5초 후에 효과 리셋
+		GetWorld()->GetTimerManager().SetTimer(EffectTimerHandle, this, &ARobot::ResetEffect, 5.0f, false);
+	}
+
+}
+
+void ARobot::HideMagneticField()
+{
+	MagneticField->SetVisibility(false);
+}
+
+void ARobot::ResetEffect()
+{
+	NormalizeSpeedAndJump();
+	bIsEffectActive = false;
+}
+
+void ARobot::NormalizeSpeedAndJump()
+{
+	GetCharacterMovement()->MaxWalkSpeed = DefaultSpeed;
+	GetCharacterMovement()->JumpZVelocity = DefaultJumpZVelocity;
+	MagneticField->SetVisibility(false);
+}
+
+void ARobot::ToggleMagneticField()
+{
+	if (!MagneticField->IsCollisionEnabled())
+	{
+		MagneticField->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+		// 5초 후에 자동으로 NoCollision으로 설정하는 타이머 설정
+		GetWorld()->GetTimerManager().SetTimer(MagneticFieldTimerHandle, this, &ARobot::DisableMagneticField, 1.0f, false);
+	}
+	else
+	{
+		// 즉시 비활성화, 타이머를 취소
+		DisableMagneticField();
+	}
+}
+
+void ARobot::DisableMagneticField()
+{
+	if (MagneticField->IsCollisionEnabled())
+	{
+		MagneticField->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		// 혹시 모르니 타이머를 취소
+		GetWorld()->GetTimerManager().ClearTimer(MagneticFieldTimerHandle);
+	}
+}
+
+void ARobot::CheckMagneticField()
+{
+	bIsMagneticFieldActive = !bIsMagneticFieldActive; // 자기장 활성화 상태 토글
+}
+
+bool ARobot::IsMagneticFieldActive() const
+{
+	return bIsMagneticFieldActive;
+}
+
 //플레이어 충돌 범위 체크
-FVector AITTCharacter::GetForwardLocation(float Distance)
+FVector ARobot::GetForwardLocation(float Distance)
 {
 	FVector ForwardVector = GetActorForwardVector(); // 액터가 바라보는 방향
 	ForwardVector *= Distance;
@@ -223,7 +328,21 @@ FVector AITTCharacter::GetForwardLocation(float Distance)
 	return ForwardVector;
 }
 
-bool AITTCharacter::CheckForObjectsInChannel(FVector StartLocation, FVector EndLocation, ECollisionChannel CollisionChannel, FCollisionShape CollisionShape)
+void ARobot::Interactive()
+{
+	FVector StartLocation = GetForwardLocation(50.0f);
+	FVector EndLocation = GetForwardLocation(100.0f);
+	if (CheckForObjectsInChannel(StartLocation, EndLocation, ECC_GameTraceChannel2, LocalCollisionShape))
+	{
+		InteractableActor = Cast<IInterfaceInteractable>(OutHit.GetActor());
+		if (InteractableActor)
+		{
+			InteractableActor->Interact(MyCharacter);
+		}
+	}
+}
+
+bool ARobot::CheckForObjectsInChannel(FVector StartLocation, FVector EndLocation, ECollisionChannel CollisionChannel, FCollisionShape CollisionShape)
 {
 	QueryParams.bTraceComplex = true;
 	QueryParams.AddIgnoredActor(this); // 자기 자신은 충돌에서 무시
@@ -242,7 +361,7 @@ bool AITTCharacter::CheckForObjectsInChannel(FVector StartLocation, FVector EndL
 	return bIsObjectFound && OutHit.bBlockingHit; // 충돌이 발생했는지 여부를 반환
 }
 
-void AITTCharacter::CreateHealthBar()
+void ARobot::CreateHealthBar()
 {
 	auto PlayerController = Cast<APlayerController>(GetController());
 	FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(this, true);
@@ -312,7 +431,7 @@ void AITTCharacter::CreateHealthBar()
 }
 
 //체력 및 스태미나 관리
-void AITTCharacter::UpdateHealth()
+void ARobot::UpdateHealth()
 {
 	CurrentHealth = FMath::Clamp(CurrentHealth, 0.f, MaxHealth);
 
@@ -327,7 +446,7 @@ void AITTCharacter::UpdateHealth()
 	}
 }
 
-void AITTCharacter::UpdateStamina()
+void ARobot::UpdateStamina()
 {
 	CurrentStamina = FMath::Clamp(CurrentStamina, 0.f, MyMaxStamina);
 
@@ -352,7 +471,7 @@ void AITTCharacter::UpdateStamina()
 	}
 }
 
-void AITTCharacter::DecreaseStamina(float StaminaAmount)
+void ARobot::DecreaseStamina(float StaminaAmount)
 {
 
 	CurrentStamina -= StaminaAmount; // 예: 달리기로 인한 스태미너 감소
@@ -366,16 +485,16 @@ void AITTCharacter::DecreaseStamina(float StaminaAmount)
 		{
 			CharMovement->MaxWalkSpeed /= 2; // 이동 속도를 절반으로 줄임
 		}
-		GetWorld()->GetTimerManager().SetTimer(SlowStateTimer, this, &AITTCharacter::RestoreWalkSpeed, SlowDuration, false);
+		GetWorld()->GetTimerManager().SetTimer(SlowStateTimer, this, &ARobot::RestoreWalkSpeed, SlowDuration, false);
 	}
 }
 
-void AITTCharacter::DecreaseStaminaRunning()
+void ARobot::DecreaseStaminaRunning()
 {
 	DecreaseStamina(0.1f);
 }
 
-void AITTCharacter::RecoverStamina(float DeltaTime)
+void ARobot::RecoverStamina(float DeltaTime)
 {
 	if (!bIsRunning && CurrentStamina < MyMaxStamina)
 	{
@@ -385,7 +504,7 @@ void AITTCharacter::RecoverStamina(float DeltaTime)
 	}
 }
 
-void AITTCharacter::RestoreWalkSpeed()
+void ARobot::RestoreWalkSpeed()
 {
 	if (UCharacterMovementComponent* CharMovement = GetCharacterMovement())
 	{
@@ -397,16 +516,7 @@ void AITTCharacter::RestoreWalkSpeed()
 	}
 }
 
-void AITTCharacter::CheckJumpStamina()
-{
-	if (CurrentStamina >= 1.0f && JumpIsAllowedInternal())
-	{
-		ACharacter::Jump();
-		//DecreaseStamina(1.0f);
-	}
-}
-
-float AITTCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
+float ARobot::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
 {
 	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	CurrentHealth -= ActualDamage;
@@ -414,50 +524,13 @@ float AITTCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& D
 	UpdateHealth();
 	if (CurrentHealth <= 0.f)
 	{
-	//	Die();
+		//	Die();
 	}
 	return ActualDamage;
 }
 
-//달리기 및 상호작용
 
-void AITTCharacter::StartRunning()
-{
-	if (CurrentStamina > 0 && !bIsRunning && !bIsStaminaDepleted)
-	{
-		bIsRunning = true;
-		GetCharacterMovement()->MaxWalkSpeed = 600.0f; // 이동 속도 증가
-		// 달리기 시작할 때 스태미너 감소 시작
-		GetWorld()->GetTimerManager().SetTimer(StaminaDecreaseStaminaForRunning, this, &AITTCharacter::DecreaseStaminaRunning, 0.1f, true);
-	}
-}
-
-void AITTCharacter::StopRunning()
-{
-	if (bIsRunning)
-	{
-		bIsRunning = false;
-		GetCharacterMovement()->MaxWalkSpeed = 250.0f; // 이동 속도 복원
-		// 달리기 중지 시 스태미너 감소 중지
-		GetWorld()->GetTimerManager().ClearTimer(StaminaDecreaseStaminaForRunning);
-	}
-}
-
-void AITTCharacter::Interactive()
-{
-	FVector StartLocation = GetForwardLocation(50.0f);
-	FVector EndLocation = GetForwardLocation(100.0f);
-	if (CheckForObjectsInChannel(StartLocation, EndLocation, ECC_GameTraceChannel2, LocalCollisionShape))
-	{
-		InteractableActor = Cast<IInterfaceInteractable>(OutHit.GetActor());
-		if (InteractableActor)
-		{
-			InteractableActor->Interact(MyCharacter);
-		}
-	}
-}
-
-void AITTCharacter::IncreaseMovementSpeed()
+void ARobot::IncreaseMovementSpeed()
 {
 	UCharacterMovementComponent* MovementComp = GetCharacterMovement();
 	if (MovementComp && !bIsSpeedBoosted) // 속도 증가가 이미 적용된 상태가 아닌 경우에만 실행
@@ -468,7 +541,7 @@ void AITTCharacter::IncreaseMovementSpeed()
 	}
 }
 
-void AITTCharacter::ResetMovementSpeed()
+void ARobot::ResetMovementSpeed()
 {
 	UCharacterMovementComponent* MovementComp = GetCharacterMovement();
 	if (MovementComp && bIsSpeedBoosted)
@@ -478,20 +551,3 @@ void AITTCharacter::ResetMovementSpeed()
 		bIsSpeedBoosted = false;
 	}
 }
-
-
-//플레이어 죽음 처리
-//void AITTCharacter::Die()
-//{
-//	// 캐릭터의 죽음 처리 로직
-//
-//	// 게임 모드에 죽음 알리기
-//	ADontForgetMeGameModeBase* GM = Cast<AITTGameMode>(UGameplayStatics::GetGameMode(this));
-//	if (GM != nullptr)
-//	{
-//		GM->PlayerDied(GetController());
-//		UE_LOG(LogTemp, Error, TEXT("Die"));
-//		Destroy();
-//	}
-//}
-
