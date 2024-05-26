@@ -13,13 +13,13 @@ class AITTCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-		/** Camera boom positioning the camera behind the character */
-		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	//	/** Camera boom positioning the camera behind the character */
+	/*	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* CameraBoom;
 
-	/** Follow camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class UCameraComponent* FollowCamera;
+	///** Follow camera */
+	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class UCameraComponent* FollowCamera;*/
 public:
 	AITTCharacter();
 
@@ -80,9 +80,6 @@ public:
 
 	void CheckJumpStamina();
 
-	// 자기장 영향 변수
-	bool bIsSpeedBoosted = false;
-
 
 protected:
 	//===============변수===============
@@ -118,6 +115,8 @@ protected:
 	const float SlowDuration = 10.0f; //슬로우 상태 시간
 
 	//float StaminaAmount;
+
+	bool bIsSpeedBoosted = false; // 현재 속도가 증가한 상태인지 확인하는 플래그
 
 
 	//===============함수===============
@@ -174,11 +173,6 @@ protected:
 
 	FVector GetForwardLocation(float Distance); //정면 시점 계산
 
-public:
-
-	void IncreaseMovementSpeed(); // 자기장 영항 받는 함수
-	
-	void ResetMovementSpeed();
 
 protected:
 	// APawn interface
@@ -190,9 +184,12 @@ protected:
 	// End of APawn interface
 
 public:
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	///** Returns CameraBoom subobject **/
+	/*FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	///** Returns FollowCamera subobject **/
+	//FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	void IncreaseMovementSpeed();
+	void ResetMovementSpeed();
 };
 

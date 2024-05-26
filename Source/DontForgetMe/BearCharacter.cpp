@@ -1,12 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "GameFramework/CharacterMovementComponent.h"
 #include "BearCharacter.h"
 
-ABearCharacter::ABearCharacter()
-{
-	// Set this character to call Tick() every frame.
-	PrimaryActorTick.bCanEverTick = true;
-}
 
 //잡고 던지기
 void ABearCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -27,11 +23,31 @@ void ABearCharacter::BeginPlay()
 	
 }
 
-void ABearCharacter::Tick(float DeltaTime)
+void  ABearCharacter::MaterialChange()
 {
-	Super::Tick(DeltaTime);
+	USkeletalMeshComponent* MeshComponent = GetMesh();
+	if (MeshComponent)
+	{
+		int32 NumMaterials = MeshComponent->GetNumMaterials();
+		for (int32 i = 0; i < NumMaterials; ++i)
+		{
+			UMaterialInstanceDynamic* DynamicMaterial = MeshComponent->CreateAndSetMaterialInstanceDynamic(i);
+			if (DynamicMaterial)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Set Opacity for material at index %d"), i);
+				DynamicMaterial->SetScalarParameterValue(FName("Opacity"), 0.5f);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("Failed to create DynamicMaterial for index %d"), i);
+			}
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("MeshComponent is null"));
+	}
 }
-
 
 void ABearCharacter::GripAndDrop()
 {
@@ -232,3 +248,25 @@ void ABearCharacter::Throw()
 //		GrippableActor = nullptr; // AttachedActor, GrippableActor 초기화
 //	}
 //}
+
+void ABearCharacter::IncreaseMovementSpeed()
+{
+	UCharacterMovementComponent* MovementComp = GetCharacterMovement();
+	if (MovementComp && !bIsSpeedBoosted) // 속도 증가가 이미 적용된 상태가 아닌 경우에만 실행
+	{
+		MovementComp->MaxWalkSpeed *= 1.5f;  // 이동 속도 증가
+		MovementComp->JumpZVelocity *= 1.5f; // 점프 속도 증가
+		bIsSpeedBoosted = true;
+	}
+}
+
+void ABearCharacter::ResetMovementSpeed()
+{
+	UCharacterMovementComponent* MovementComp = GetCharacterMovement();
+	if (MovementComp && bIsSpeedBoosted)
+	{
+		MovementComp->MaxWalkSpeed /= 1.5f;  // 이동 속도 원상 복귀
+		MovementComp->JumpZVelocity /= 1.5f; // 점프 속도 원상 복귀
+		bIsSpeedBoosted = false;
+	}
+}

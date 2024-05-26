@@ -1,4 +1,5 @@
 #include "Object1.h"
+#include "ITTCharacter.h"
 #include "Robot.h"
 #include "Object2.h"
 #include "Components/StaticMeshComponent.h"

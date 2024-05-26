@@ -15,19 +15,20 @@ class DONTFORGETME_API ABearCharacter : public AITTCharacter
 	GENERATED_BODY()
 
 
-	ABearCharacter();
+	//ABearCharacter();
 
 	virtual void BeginPlay() override;
 
-	virtual void Tick(float DeltaTime) override;
+	//virtual void Tick(float DeltaTime) override;
 
 	void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	IInterfaceGrip* GrippableActor;
 
-	void GripAndDrop(); //ï¿½ï¿½ï¿½&ï¿½ï¿½ï¿½ï¿½
+	void GripAndDrop(); //µé±â&³õ±â
 
-	void Throw(); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	void Throw(); //´øÁö±â
+
 
 	
 protected:
@@ -38,5 +39,12 @@ protected:
 public:
 	
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Grip")
-	bool bisGrip;  //ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ó½Ãºï¿½ï¿½ï¿½
+	bool bisGrip;  //¾Ö´Ï¸ÞÀÌ¼ÇÀ» À§ÇÑ ÀÓ½Ãº¯¼ö
+
+	UFUNCTION(BlueprintCallable, Category = "Material")
+	void MaterialChange();
+
+
+	void IncreaseMovementSpeed();
+	void ResetMovementSpeed();
 };

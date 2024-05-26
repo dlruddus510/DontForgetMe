@@ -47,23 +47,21 @@ AITTCharacter::AITTCharacter()
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
-<<<<<<< Updated upstream
 	// Create a camera boom (pulls in towards the player if there is a collision)
-	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
-	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
+	//CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+	//CameraBoom->SetupAttachment(RootComponent);
+	//CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
+	//CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 
-	// Create a follow camera
-	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
-	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+	////// Create a follow camera
+	//FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+	//FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
+	//FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
-=======
->>>>>>> Stashed changes
+
 }
 
 void AITTCharacter::BeginPlay()
@@ -74,6 +72,7 @@ void AITTCharacter::BeginPlay()
 	CurrentHealth = MaxHealth;
 
 	// 기본 스태미너 설정
+
 	CurrentStamina = MyMaxStamina;
 
 	bIsStaminaDepleted = false;
@@ -457,29 +456,6 @@ void AITTCharacter::Interactive()
 	}
 }
 
-void AITTCharacter::IncreaseMovementSpeed()
-{
-	UCharacterMovementComponent* MovementComp = GetCharacterMovement();
-	if (MovementComp && !bIsSpeedBoosted) // 속도 증가가 이미 적용된 상태가 아닌 경우에만 실행
-	{
-		MovementComp->MaxWalkSpeed *= 1.5f;  // 이동 속도 증가
-		MovementComp->JumpZVelocity *= 1.5f; // 점프 속도 증가
-		bIsSpeedBoosted = true;
-	}
-}
-
-void AITTCharacter::ResetMovementSpeed()
-{
-	UCharacterMovementComponent* MovementComp = GetCharacterMovement();
-	if (MovementComp && bIsSpeedBoosted)
-	{
-		MovementComp->MaxWalkSpeed /= 1.5f;  // 이동 속도 원상 복귀
-		MovementComp->JumpZVelocity /= 1.5f; // 점프 속도 원상 복귀
-		bIsSpeedBoosted = false;
-	}
-}
-
-
 //플레이어 죽음 처리
 //void AITTCharacter::Die()
 //{
@@ -494,4 +470,5 @@ void AITTCharacter::ResetMovementSpeed()
 //		Destroy();
 //	}
 //}
+
 
