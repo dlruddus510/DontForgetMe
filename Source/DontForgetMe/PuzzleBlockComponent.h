@@ -12,7 +12,7 @@ enum class EPuzzleBlockShape : uint8
     Shape1 UMETA(DisplayName = "Shape1"),
     Shape2 UMETA(DisplayName = "Shape2"),
     Shape3 UMETA(DisplayName = "Shape3"),
-    // Add more shapes as needed
+   
 };
 
 class APuzzleBoard; // 전방 선언
