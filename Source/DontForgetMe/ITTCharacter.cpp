@@ -456,6 +456,15 @@ void AITTCharacter::Interactive()
 	}
 }
 
+void AITTCharacter::IncreaseMovementSpeed()
+{
+
+}
+void AITTCharacter::ResetMovementSpeed()
+{
+	
+}
+
 //플레이어 죽음 처리
 //void AITTCharacter::Die()
 //{
