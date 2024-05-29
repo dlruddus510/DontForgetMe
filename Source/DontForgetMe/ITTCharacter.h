@@ -89,7 +89,7 @@ public:
 
 	// 사망 처리 함수
 	void Die();
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Run")
 	bool bIsRunning = false;
 
 	void CheckJumpStamina();
