@@ -5,8 +5,16 @@
 #include "CoreMinimal.h"
 #include "InterfaceInteractable.h"
 #include "InterfaceGrip.h"
+#include "CheckPoint.h"
 #include "GameFramework/Character.h"
 #include "ITTCharacter.generated.h"
+
+UENUM(BlueprintType)
+enum class ECharacterType : uint8
+{
+	Bear    UMETA(DisplayName = "Bear"),
+	Robot   UMETA(DisplayName = "Robot")
+};
 
 UCLASS(config = Game)
 class AITTCharacter : public ACharacter
@@ -39,6 +47,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
 		float MaxStamina = 10.0f;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CheckPoint")
+		FVector CheckPoint;
+		
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character")
+		ECharacterType SelectedCharacterType;
+
 	// UI 위젯 클래스의 참조
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 		TSubclassOf<UUserWidget> PlayerHealthBarClass;
@@ -68,13 +82,13 @@ public:
 	UFUNCTION()
 		void RecoverStamina(float DeltaTime);
 
-
+	UFUNCTION(BlueprintCallable, Category = "Health")
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	void RestoreWalkSpeed(); // 이동 속도를 원래대로 복구하는 함수
 
 	// 사망 처리 함수
-	//void Die();
+	void Die();
 
 	bool bIsRunning = false;
 

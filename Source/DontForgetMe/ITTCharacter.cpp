@@ -67,6 +67,7 @@ void AITTCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+
 	//기본 체력 설정
 	CurrentHealth = MaxHealth;
 
@@ -412,7 +413,7 @@ float AITTCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& D
 	UpdateHealth();
 	if (CurrentHealth <= 0.f)
 	{
-	//	Die();
+		Die();
 	}
 	return ActualDamage;
 }
@@ -465,17 +466,16 @@ void AITTCharacter::ResetMovementSpeed()
 }
 
 //플레이어 죽음 처리
-//void AITTCharacter::Die()
-//{
-//	// 캐릭터의 죽음 처리 로직
-//
-//	// 게임 모드에 죽음 알리기
-//	ADontForgetMeGameModeBase* GM = Cast<AITTGameMode>(UGameplayStatics::GetGameMode(this));
-//	if (GM != nullptr)
-//	{
-//		GM->PlayerDied(GetController());
-//		UE_LOG(LogTemp, Error, TEXT("Die"));
-//		Destroy();
-//	}
-//}
+void AITTCharacter::Die()
+{
+	// 캐릭터의 죽음 처리 로직
+
+	// 게임 모드에 죽음 알리기
+	ADontForgetMeGameModeBase* GM = Cast<ADontForgetMeGameModeBase>(UGameplayStatics::GetGameMode(this));
+	if (GM != nullptr)
+	{
+		GM->PlayerDied(GetController());
+		UE_LOG(LogTemp, Error, TEXT("Die"));
+	}
+}
 
