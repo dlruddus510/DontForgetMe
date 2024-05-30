@@ -465,6 +465,11 @@ void AITTCharacter::ResetMovementSpeed()
 	
 }
 
+void AITTCharacter::PlayHealingSound_Implementation()
+{
+	// 여기에 기본 구현 추가
+}
+
 //플레이어 죽음 처리
 void AITTCharacter::Die()
 {

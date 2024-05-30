@@ -10,7 +10,7 @@ void AAllRecoveryPickup::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AAc
     {
         if (Character->CurrentStamina != Character->MaxStamina || Character->CurrentHealth != Character->MaxHealth)
         {
-            
+            Character->PlayHealingSound();
             Character->CurrentHealth = Character->MaxHealth;
             Character->CurrentStamina = Character->MaxStamina;
             Character->RestoreWalkSpeed();

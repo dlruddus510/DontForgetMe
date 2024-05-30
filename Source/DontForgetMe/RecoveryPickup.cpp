@@ -16,6 +16,7 @@ ARecoveryPickup::ARecoveryPickup()
 
     // �̺�Ʈ ���ε�
     CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ARecoveryPickup::OnOverlapBegin);
+
 }
 
 void ARecoveryPickup::BeginPlay()
@@ -24,6 +25,11 @@ void ARecoveryPickup::BeginPlay()
 }
 
 void ARecoveryPickup::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+
+}
+
+void ARecoveryPickup::PlaySound()
 {
 
 }

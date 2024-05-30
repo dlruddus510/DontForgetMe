@@ -82,6 +82,10 @@ public:
 	UFUNCTION()
 		void RecoverStamina(float DeltaTime);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Health")
+		void PlayHealingSound();
+	virtual void PlayHealingSound_Implementation();
+
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 

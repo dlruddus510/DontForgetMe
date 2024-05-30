@@ -16,5 +16,5 @@ class DONTFORGETME_API AStaminaPickup : public ARecoveryPickup
 
 public:
     void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
-    void HandleStaminaRecovery(AActor* Character, const FHitResult& SweepResult);
+    //void HandleStaminaRecovery(AActor* Character, const FHitResult& SweepResult);
 };

@@ -6,6 +6,9 @@
 #include "Components/BoxComponent.h"
 #include "ITTCharacter.h"
 #include "NiagaraComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 #include "NiagaraFunctionLibrary.h"
 #include "GameFramework/Actor.h"
 #include "RecoveryPickup.generated.h"
@@ -24,9 +27,16 @@ protected:
     virtual void BeginPlay() override;
 
 public:
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound", meta = (AllowPrivateAccess = "true"))
+        USoundBase* PickupSound;
+
     // �浹�� �����ϱ� ���� ������Ʈ
     UPROPERTY(VisibleAnywhere, Category = "Components")
     class UBoxComponent* CollisionBox;
+
+    UFUNCTION()
+        void PlaySound();
 
     // �浹 �� ����� �Լ�
     UFUNCTION()
