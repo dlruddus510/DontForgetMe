@@ -249,6 +249,7 @@ void AITTCharacter::CreateHealthBar()
 	if (PlayerController != nullptr && PlayerHealthBarClass != nullptr && CurrentLevelName != "Mainmenu")
 	{
 		PlayerHealthBar = CreateWidget<UUserWidget>(PlayerController, PlayerHealthBarClass);
+		PlayerRespawn = CreateWidget<UUserWidget>(PlayerController, PlayerRespawnClass);
 		if (PlayerHealthBar)
 		{
 			UE_LOG(LogTemp, Error, TEXT("PlayerHealthBar Suc"));
@@ -470,6 +471,11 @@ void AITTCharacter::PlayHealingSound_Implementation()
 	// 여기에 기본 구현 추가
 }
 
+void AITTCharacter::PlayRespawnUI_Implementation()
+{
+
+}
+
 //플레이어 죽음 처리
 void AITTCharacter::Die()
 {
@@ -479,6 +485,7 @@ void AITTCharacter::Die()
 	ADontForgetMeGameModeBase* GM = Cast<ADontForgetMeGameModeBase>(UGameplayStatics::GetGameMode(this));
 	if (GM != nullptr)
 	{
+		PlayerHealthBar->RemoveFromParent();
 		GM->PlayerDied(GetController());
 		UE_LOG(LogTemp, Error, TEXT("Die"));
 	}

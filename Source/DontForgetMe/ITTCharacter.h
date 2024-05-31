@@ -57,9 +57,15 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 		TSubclassOf<UUserWidget> PlayerHealthBarClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+		TSubclassOf<UUserWidget> PlayerRespawnClass;
+
 	// UI 위젯 인스턴스
 	UPROPERTY()
 		UUserWidget* PlayerHealthBar;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI")
+		UUserWidget* PlayerRespawn;
 
 	FTimerHandle SlowStateTimer; //슬로우 시간 타이머핸들
 
@@ -88,6 +94,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Respawn")
+		void PlayRespawnUI();
+	virtual void PlayRespawnUI_Implementation();
 
 	void RestoreWalkSpeed(); // 이동 속도를 원래대로 복구하는 함수
 
