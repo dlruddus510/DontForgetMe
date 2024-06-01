@@ -1,7 +1,7 @@
 #include "Object1.h"
 #include "ITTCharacter.h"
 #include "Robot.h"
-#include "Object2.h"
+#include "UpDown.h"
 #include "Components/StaticMeshComponent.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Engine/World.h"
@@ -9,7 +9,7 @@
 #include "TimerManager.h"
 
 // Sets default values
-AObject1::AObject1()
+AUpDown::AUpDown()
 {
     PrimaryActorTick.bCanEverTick = true;
 
@@ -21,7 +21,7 @@ AObject1::AObject1()
     MeshComp->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
     MeshComp->SetCollisionResponseToChannel(ECC_Pawn, ECollisionResponse::ECR_Block);
 
-    MeshComp->OnComponentBeginOverlap.AddDynamic(this, &AObject1::OnOverlapBegin);
+    MeshComp->OnComponentBeginOverlap.AddDynamic(this, &AUpDown::OnOverlapBegin);
 
     bIsMoving = false;
     bIsReturning = false;
@@ -30,14 +30,16 @@ AObject1::AObject1()
 
     NewMaterial = nullptr;
     OriginalMaterial = nullptr;
+
+    MoveDirection = FVector(1.0f, 0.0f, 0.0f); // 초기 이동 방향을 X축으로 설정
 }
 
 // Called when the game starts or when spawned
-void AObject1::BeginPlay()
+void AUpDown::BeginPlay()
 {
     Super::BeginPlay();
     InitialLocation = GetActorLocation();
-    TargetLocation = InitialLocation - FVector(MoveDistance, 0.0f, 0.0f); // 뒤로 이동하도록 목표 위치 설정
+    TargetLocation = InitialLocation + (MoveDirection * MoveDistance);
 
     if (MeshComp->GetMaterial(0))
     {
@@ -51,14 +53,13 @@ void AObject1::BeginPlay()
 }
 
 // Called every frame
-void AObject1::Tick(float DeltaTime)
+void AUpDown::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
     if (bIsMoving)
     {
-        FVector BackwardVector = FVector(-1.0f, 0.0f, 0.0f); // 뒤로 이동
-        FVector NewLocation = GetActorLocation() + (BackwardVector * MoveSpeed * DeltaTime);
+        FVector NewLocation = GetActorLocation() + (MoveDirection * MoveSpeed * DeltaTime);
 
         if (FVector::Dist(InitialLocation, NewLocation) < MoveDistance)
         {
@@ -66,7 +67,7 @@ void AObject1::Tick(float DeltaTime)
 
             if (TargetObject2)
             {
-                FVector TargetNewLocation = TargetObject2->GetActorLocation() + (BackwardVector * MoveSpeed * DeltaTime);
+                FVector TargetNewLocation = TargetObject2->GetActorLocation() + (MoveDirection * MoveSpeed * DeltaTime);
                 TargetObject2->SetActorLocation(TargetNewLocation);
             }
         }
@@ -75,10 +76,10 @@ void AObject1::Tick(float DeltaTime)
             bIsMoving = false;
 
             // Set timer to start return movement after 3 seconds
-            GetWorld()->GetTimerManager().SetTimer(ReturnTimerHandle, this, &AObject1::StartReturnMovement, 3.0f, false);
+            GetWorld()->GetTimerManager().SetTimer(ReturnTimerHandle, this, &AUpDown::StartReturnMovement, 3.0f, false);
 
             // Set timer to reset the material after 3 seconds
-            GetWorld()->GetTimerManager().SetTimer(MaterialTimerHandle, this, &AObject1::ResetMaterial, 2.9f, false);
+            GetWorld()->GetTimerManager().SetTimer(MaterialTimerHandle, this, &AUpDown::ResetMaterial, 2.9f, false);
         }
     }
     else if (bIsReturning)
@@ -87,7 +88,7 @@ void AObject1::Tick(float DeltaTime)
     }
 }
 
-void AObject1::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AUpDown::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
     UE_LOG(LogTemp, Warning, TEXT("Overlap Event Triggered with %s"), *OtherActor->GetName());
 
@@ -103,21 +104,20 @@ void AObject1::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Other
     }
 }
 
-void AObject1::MoveObjects()
+void AUpDown::MoveObjects()
 {
     bIsMoving = true;
     InitialLocation = GetActorLocation();
 }
 
-void AObject1::StartReturnMovement()
+void AUpDown::StartReturnMovement()
 {
     bIsReturning = true;
 }
 
-void AObject1::ReturnObjects(float DeltaTime)
+void AUpDown::ReturnObjects(float DeltaTime)
 {
-    FVector ForwardVector = FVector(1.0f, 0.0f, 0.0f); // 앞으로 이동
-    FVector NewLocation = GetActorLocation() + (ForwardVector * MoveSpeed * DeltaTime);
+    FVector NewLocation = GetActorLocation() - (MoveDirection * MoveSpeed * DeltaTime);
 
     if (FVector::Dist(TargetLocation, NewLocation) < MoveDistance)
     {
@@ -125,7 +125,7 @@ void AObject1::ReturnObjects(float DeltaTime)
 
         if (TargetObject2)
         {
-            FVector TargetNewLocation = TargetObject2->GetActorLocation() + (ForwardVector * MoveSpeed * DeltaTime);
+            FVector TargetNewLocation = TargetObject2->GetActorLocation() - (MoveDirection * MoveSpeed * DeltaTime);
             TargetObject2->SetActorLocation(TargetNewLocation);
         }
     }
@@ -137,7 +137,7 @@ void AObject1::ReturnObjects(float DeltaTime)
     }
 }
 
-void AObject1::ResetObjects()
+void AUpDown::ResetObjects()
 {
     if (TargetObject2)
     {
@@ -145,10 +145,17 @@ void AObject1::ResetObjects()
     }
 }
 
-void AObject1::ResetMaterial()
+void AUpDown::ResetMaterial()
 {
     if (OriginalMaterial)
     {
         MeshComp->SetMaterial(0, OriginalMaterial);
     }
+}
+
+// 이동 방향을 설정하는 함수 추가
+void AUpDown::SetMoveDirection(FVector NewDirection)
+{
+    MoveDirection = NewDirection.GetSafeNormal(); // 방향 벡터를 단위 벡터로 정규화
+    TargetLocation = InitialLocation + (MoveDirection * MoveDistance);
 }
