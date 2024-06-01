@@ -1,7 +1,6 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
-
 #include "DontForgetMeGameModeBase.h"
+#include "TimerManager.h"
+#include "Kismet/GameplayStatics.h"
 
 void ADontForgetMeGameModeBase::PlayerDied(AController* PlayerController)
 {
@@ -12,8 +11,8 @@ void ADontForgetMeGameModeBase::PlayerDied(AController* PlayerController)
         Count++;
 
         // 부활 대기 시간 계산
-        RespawnTime = FMath::Min(Count * 5.0f, 30.0f);
-        RespawnCharacterClass = nullptr;
+        float RespawnTimeLocal = FMath::Min(Count * 5.0f, 30.0f);
+        TSubclassOf<AITTCharacter> RespawnCharacterClassLocal = nullptr;
         APawn* ControlledPawn = PlayerController->GetPawn();
         if (ControlledPawn)
         {
@@ -23,13 +22,13 @@ void ADontForgetMeGameModeBase::PlayerDied(AController* PlayerController)
                 switch (ITTCharacter->SelectedCharacterType)
                 {
                 case ECharacterType::Bear:
-                    RespawnCharacterClass = BearCharacterClass;
+                    RespawnCharacterClassLocal = BearCharacterClass;
                     break;
                 case ECharacterType::Robot:
-                    RespawnCharacterClass = RobotCharacterClass;
+                    RespawnCharacterClassLocal = RobotCharacterClass;
                     break;
                 default:
-                    RespawnCharacterClass = AITTCharacter::StaticClass();
+                    RespawnCharacterClassLocal = AITTCharacter::StaticClass();
                     break;
                 }
 
@@ -40,29 +39,30 @@ void ADontForgetMeGameModeBase::PlayerDied(AController* PlayerController)
             }
         }
 
-        // 플레이어에 대한 UI를 PlayerRespawn에 저장
+        // 플레이어에 대한 UI를 PlayerRespawnMap에 저장
+        TWeakObjectPtr<UUserWidget>& PlayerRespawn = PlayerRespawnMap.FindOrAdd(PlayerController);
         PlayerRespawn = ITTCharacter->PlayerRespawn;
 
         // 부활 로직
         FTimerHandle& PlayerTimerHandle = PlayerTimerHandles.FindOrAdd(PlayerController);
-        GetWorld()->GetTimerManager().SetTimer(PlayerTimerHandle, [this, PlayerController]() {
-            RespawnPlayer(PlayerController);
+        GetWorld()->GetTimerManager().SetTimer(PlayerTimerHandle, [this, PlayerController, RespawnCharacterClassLocal]() {
+            RespawnPlayer(PlayerController, RespawnCharacterClassLocal);
             HideRespawnUI(PlayerController);
-            }, RespawnTime, false);
+            }, RespawnTimeLocal, false);
     }
 }
-void ADontForgetMeGameModeBase::RespawnPlayer(AController* PlayerController)
+
+void ADontForgetMeGameModeBase::RespawnPlayer(AController* PlayerController, TSubclassOf<AITTCharacter> RespawnCharacterClassLocal)
 {
     if (PlayerController != nullptr)
     {
         FVector SpawnLocation = FVector::ZeroVector;
         FRotator SpawnRotation = FRotator::ZeroRotator;
-        APawn* ControlledPawn = PlayerController->GetPawn();
         if (ITTCharacter)
         {
             SpawnLocation = ITTCharacter->CheckPoint;
 
-            AITTCharacter* NewCharacter = GetWorld()->SpawnActor<AITTCharacter>(RespawnCharacterClass, SpawnLocation, SpawnRotation);
+            AITTCharacter* NewCharacter = GetWorld()->SpawnActor<AITTCharacter>(RespawnCharacterClassLocal, SpawnLocation, SpawnRotation);
             if (NewCharacter != nullptr)
             {
                 NewCharacter->MaxHealth = 5.0f;
@@ -88,9 +88,14 @@ float ADontForgetMeGameModeBase::GetRemainingTime(AController* PlayerController)
 void ADontForgetMeGameModeBase::HideRespawnUI(AController* PlayerController)
 {
     // 플레이어별 UI 숨기기
-    if (PlayerRespawn != nullptr)
+    TWeakObjectPtr<UUserWidget>* PlayerRespawnPtr = PlayerRespawnMap.Find(PlayerController);
+    if (PlayerRespawnPtr != nullptr && PlayerRespawnPtr->IsValid())
     {
-        PlayerRespawn->RemoveFromParent();
-        PlayerRespawn = nullptr;
+        UUserWidget* PlayerRespawn = PlayerRespawnPtr->Get();
+        if (PlayerRespawn != nullptr)
+        {
+            PlayerRespawn->RemoveFromParent();
+            *PlayerRespawnPtr = nullptr;
+        }
     }
 }

@@ -24,7 +24,7 @@ public:
 	void PlayerDied(AController* LostPlayerController);
 
 	// 플레이어를 부활시키는 함수
-	void RespawnPlayer(AController* LostPlayerController);
+	void RespawnPlayer(AController* PlayerController, TSubclassOf<AITTCharacter> RespawnCharacterClass);
 
 	UClass* RespawnCharacterClass;
 
@@ -46,8 +46,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Respawn")
 	TMap<AController*, FTimerHandle> PlayerTimerHandles; // 추가: 플레이어마다 다른 타이머 핸들 저장
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI")
-		UUserWidget* PlayerRespawn;
+		TMap<AController*, TWeakObjectPtr<UUserWidget>> PlayerRespawnMap;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Respawn")
 		TSubclassOf<AITTCharacter> BP_RespawnCharacterClass;
