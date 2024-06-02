@@ -286,12 +286,12 @@ void AITTCharacter::CreateHealthBar()
 				{
 					NewX = (-(ViewportSize.X / 2.0f)) - 250;
 					UE_LOG(LogTemp, Error, TEXT("NewX : %f"), ViewportSize.X);
-					NewY = ViewportSize.Y - (ViewportSize.Y / 5.f);
+					NewY = ViewportSize.Y - (ViewportSize.Y / 3.f);
 				}
 				else // 나중에 추가된 플레이어의 경우
 				{
 					NewX = (ViewportSize.X / 2.0f) - 250; // 화면의 오른쪽 중간
-					NewY = ViewportSize.Y - (ViewportSize.Y / 5.f);
+					NewY = ViewportSize.Y - (ViewportSize.Y / 3.f);
 				}
 
 				FVector2D NewPosition(NewX, NewY);
