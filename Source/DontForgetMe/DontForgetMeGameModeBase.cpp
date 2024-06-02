@@ -6,11 +6,11 @@ void ADontForgetMeGameModeBase::PlayerDied(AController* PlayerController)
 {
     if (PlayerController != nullptr)
     {
-        // ºÎÈ° Ä«¿îÆ® Áõ°¡
+        // ï¿½ï¿½È° Ä«ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
         int32& Count = RespawnCounts.FindOrAdd(PlayerController);
         Count++;
 
-        // ºÎÈ° ´ë±â ½Ã°£ °è»ê
+        // ï¿½ï¿½È° ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½
         float RespawnTimeLocal = FMath::Min(Count * 5.0f, 30.0f);
         TSubclassOf<AITTCharacter> RespawnCharacterClassLocal = nullptr;
         APawn* ControlledPawn = PlayerController->GetPawn();
@@ -32,18 +32,18 @@ void ADontForgetMeGameModeBase::PlayerDied(AController* PlayerController)
                     break;
                 }
 
-                // °¢ ÇÃ·¹ÀÌ¾î¿¡ ´ëÇÑ UI ¼³Á¤
+                // ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ ï¿½ï¿½ï¿½ï¿½ UI ï¿½ï¿½ï¿½ï¿½
                 ITTCharacter->PlayRespawnUI();
 
                 ITTCharacter->Destroy();
             }
         }
 
-        // ÇÃ·¹ÀÌ¾î¿¡ ´ëÇÑ UI¸¦ PlayerRespawnMap¿¡ ÀúÀå
+        // ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ ï¿½ï¿½ï¿½ï¿½ UIï¿½ï¿½ PlayerRespawnMapï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         TWeakObjectPtr<UUserWidget>& PlayerRespawn = PlayerRespawnMap.FindOrAdd(PlayerController);
         PlayerRespawn = ITTCharacter->PlayerRespawn;
 
-        // ºÎÈ° ·ÎÁ÷
+        // ï¿½ï¿½È° ï¿½ï¿½ï¿½ï¿½
         FTimerHandle& PlayerTimerHandle = PlayerTimerHandles.FindOrAdd(PlayerController);
         GetWorld()->GetTimerManager().SetTimer(PlayerTimerHandle, [this, PlayerController, RespawnCharacterClassLocal]() {
             RespawnPlayer(PlayerController, RespawnCharacterClassLocal);
@@ -61,15 +61,18 @@ void ADontForgetMeGameModeBase::RespawnPlayer(AController* PlayerController, TSu
         if (ITTCharacter)
         {
             SpawnLocation = ITTCharacter->CheckPoint;
+            FActorSpawnParameters SpawnParameters;
+            SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-            AITTCharacter* NewCharacter = GetWorld()->SpawnActor<AITTCharacter>(RespawnCharacterClassLocal, SpawnLocation, SpawnRotation);
+            AITTCharacter* NewCharacter = GetWorld()->SpawnActor<AITTCharacter>(RespawnCharacterClassLocal, SpawnLocation, SpawnRotation, SpawnParameters);
+           
             if (NewCharacter != nullptr)
             {
                 NewCharacter->MaxHealth = 5.0f;
-                NewCharacter->CurrentHealth = 5.0f; // ºÎÈ°ÇÑ Ä³¸¯ÅÍÀÇ Ã¼·ÂÀ» 5·Î ¼³Á¤
+                NewCharacter->CurrentHealth = 5.0f; // ï¿½ï¿½È°ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½ï¿½ï¿½ 5ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 PlayerController->Possess(NewCharacter);
                 NewCharacter->UpdateHealth();
-                UE_LOG(LogTemp, Error, TEXT("Respawn: Successfully respawned a character.")); // ºÎÈ° ¼º°ø ½Ã ·Î±×
+                UE_LOG(LogTemp, Error, TEXT("Respawn: Successfully respawned a character.")); // ï¿½ï¿½È° ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Î±ï¿½
             }
         }
     }
@@ -87,7 +90,7 @@ float ADontForgetMeGameModeBase::GetRemainingTime(AController* PlayerController)
 
 void ADontForgetMeGameModeBase::HideRespawnUI(AController* PlayerController)
 {
-    // ÇÃ·¹ÀÌ¾îº° UI ¼û±â±â
+    // ï¿½Ã·ï¿½ï¿½Ì¾îº° UI ï¿½ï¿½ï¿½ï¿½ï¿½
     TWeakObjectPtr<UUserWidget>* PlayerRespawnPtr = PlayerRespawnMap.Find(PlayerController);
     if (PlayerRespawnPtr != nullptr && PlayerRespawnPtr->IsValid())
     {
