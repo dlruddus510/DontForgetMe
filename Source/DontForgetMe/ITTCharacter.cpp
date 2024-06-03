@@ -68,10 +68,10 @@ void AITTCharacter::BeginPlay()
 	Super::BeginPlay();
 
 
-	//±âº» Ã¼·Â ¼³Á¤
+	//ï¿½âº» Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	CurrentHealth = MaxHealth;
 
-	// ±âº» ½ºÅÂ¹Ì³Ê ¼³Á¤
+	// ï¿½âº» ï¿½ï¿½ï¿½Â¹Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 	CurrentStamina = MaxStamina;
 
@@ -80,7 +80,7 @@ void AITTCharacter::BeginPlay()
 
 	CheckForController();
 
-	LocalCollisionShape = FCollisionShape::MakeSphere(80.0f); //Ãæµ¹ ¹üÀ§ 50.0f ¼³Á¤
+	LocalCollisionShape = FCollisionShape::MakeSphere(80.0f); //ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½ 50.0f ï¿½ï¿½ï¿½ï¿½
 
 	UE_LOG(LogTemp, Error, TEXT("RespawnTest"));
 
@@ -186,17 +186,17 @@ void AITTCharacter::MoveRight(float Value)
 	}
 }
 
-//ÇÃ·¹ÀÌ¾î ÄÁÆ®·Ñ·¯ ¹× Possess Ã¼Å©
+//ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ ï¿½ï¿½ Possess Ã¼Å©
 void AITTCharacter::CheckForController()
 {
 	if (GetController() != nullptr)
 	{
-		// ÄÁÆ®·Ñ·¯°¡ ÀÖÀ» °æ¿ì À§Á¬ »ı¼º ·ÎÁ÷ ½ÇÇà
+		// ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		CreateHealthBar();
 	}
 	else
 	{
-		// ÄÁÆ®·Ñ·¯°¡ ¾øÀ» °æ¿ì 0.01ÃÊ ÈÄ ´Ù½Ã È®ÀÎ
+		// ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ 0.01ï¿½ï¿½ ï¿½ï¿½ ï¿½Ù½ï¿½ È®ï¿½ï¿½
 		FTimerHandle UnusedHandle;
 		GetWorldTimerManager().SetTimer(UnusedHandle, this, &AITTCharacter::CheckForController, 0.01f, false);
 	}
@@ -204,18 +204,18 @@ void AITTCharacter::CheckForController()
 
 void AITTCharacter::CheckIfPossessed()
 {
-	// ÀÌ Ä³¸¯ÅÍ°¡ ¾Æ¹« ÄÁÆ®·Ñ·¯¿¡µµ ¼ÒÀ¯µÇÁö ¾Ê¾Ò´Ù¸é
+	// ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½Í°ï¿½ ï¿½Æ¹ï¿½ ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¾Ò´Ù¸ï¿½
 	if (GetController() == nullptr)
 	{
-		// Ä³¸¯ÅÍ »èÁ¦
+		// Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		Destroy();
 	}
 }
 
-//ÇÃ·¹ÀÌ¾î Ãæµ¹ ¹üÀ§ Ã¼Å©
+//ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½ Ã¼Å©
 FVector AITTCharacter::GetForwardLocation(float Distance)
 {
-	FVector ForwardVector = GetActorForwardVector(); // ¾×ÅÍ°¡ ¹Ù¶óº¸´Â ¹æÇâ
+	FVector ForwardVector = GetActorForwardVector(); // ï¿½ï¿½ï¿½Í°ï¿½ ï¿½Ù¶óº¸´ï¿½ ï¿½ï¿½ï¿½ï¿½
 	ForwardVector *= Distance;
 	ForwardVector += GetActorLocation();
 
@@ -225,9 +225,9 @@ FVector AITTCharacter::GetForwardLocation(float Distance)
 bool AITTCharacter::CheckForObjectsInChannel(FVector StartLocation, FVector EndLocation, ECollisionChannel CollisionChannel, FCollisionShape CollisionShape)
 {
 	QueryParams.bTraceComplex = true;
-	QueryParams.AddIgnoredActor(this); // ÀÚ±â ÀÚ½ÅÀº Ãæµ¹¿¡¼­ ¹«½Ã
+	QueryParams.AddIgnoredActor(this); // ï¿½Ú±ï¿½ ï¿½Ú½ï¿½ï¿½ï¿½ ï¿½æµ¹ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-	// SweepSingleByChannelÀ» »ç¿ëÇÏ¿© ÁöÁ¤µÈ ¹üÀ§¿Í Ã¤³Î¿¡¼­ ¿ÀºêÁ§Æ®°¡ ÀÖ´ÂÁö È®ÀÎ
+	// SweepSingleByChannelï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½
 	bool bIsObjectFound = GetWorld()->SweepSingleByChannel(
 		OutHit,
 		StartLocation,
@@ -238,7 +238,7 @@ bool AITTCharacter::CheckForObjectsInChannel(FVector StartLocation, FVector EndL
 		QueryParams
 	);
 
-	return bIsObjectFound && OutHit.bBlockingHit; // Ãæµ¹ÀÌ ¹ß»ıÇß´ÂÁö ¿©ºÎ¸¦ ¹İÈ¯
+	return bIsObjectFound && OutHit.bBlockingHit; // ï¿½æµ¹ï¿½ï¿½ ï¿½ß»ï¿½ï¿½ß´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î¸ï¿½ ï¿½ï¿½È¯
 }
 
 void AITTCharacter::CreateHealthBar()
@@ -257,8 +257,8 @@ void AITTCharacter::CreateHealthBar()
 			PlayerHealthBar->SetVisibility(ESlateVisibility::Visible);
 			UE_LOG(LogTemp, Error, TEXT("Player ID: %d"), PlayerController->PlayerState ? PlayerController->PlayerState->GetPlayerId() : -1);
 
-			// ¸ğµç ÇÃ·¹ÀÌ¾î ÄÁÆ®·Ñ·¯¸¦ ¼øÈ¸ÇÏ¿© °¡Àå ³·Àº PlayerId Ã£±â
-			int32 LowestPlayerId = INT32_MAX; // °¡Àå Å« int °ªÀ¸·Î ÃÊ±âÈ­
+			// ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ï¿½ï¿½ ï¿½ï¿½È¸ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ PlayerId Ã£ï¿½ï¿½
+			int32 LowestPlayerId = INT32_MAX; // ï¿½ï¿½ï¿½ï¿½ Å« int ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
 			for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
 			{
 				APlayerController* IterPlayerController = Iterator->Get();
@@ -272,31 +272,31 @@ void AITTCharacter::CreateHealthBar()
 				}
 			}
 
-			// ÇöÀç PlayerControllerÀÇ PlayerId
+			// ï¿½ï¿½ï¿½ï¿½ PlayerControllerï¿½ï¿½ PlayerId
 			int32 CurrentPlayerId = PlayerController->PlayerState ? PlayerController->PlayerState->GetPlayerId() : -1;
 
-			// UI À§Ä¡ ¼³Á¤
+			// UI ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½
 			float NewX, NewY;
 			FVector2D ViewportSize;
 			if (GEngine && GEngine->GameViewport)
 			{
 				GEngine->GameViewport->GetViewportSize(ViewportSize);
-				// ±âÁ¸ ÇÃ·¹ÀÌ¾îÀÇ °æ¿ì
+				// ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 				if (CurrentPlayerId == LowestPlayerId)
 				{
 					NewX = (-(ViewportSize.X / 2.0f)) - 250;
 					UE_LOG(LogTemp, Error, TEXT("NewX : %f"), ViewportSize.X);
 					NewY = ViewportSize.Y - (ViewportSize.Y / 3.f);
 				}
-				else // ³ªÁß¿¡ Ãß°¡µÈ ÇÃ·¹ÀÌ¾îÀÇ °æ¿ì
+				else // ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 				{
-					NewX = (ViewportSize.X / 2.0f) - 250; // È­¸éÀÇ ¿À¸¥ÂÊ Áß°£
+					NewX = (ViewportSize.X / 2.0f) - 250; // È­ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
 					NewY = ViewportSize.Y - (ViewportSize.Y / 3.f);
 				}
 
 				FVector2D NewPosition(NewX, NewY);
 
-				// VerticalBoxÀÇ CanvasPanelSlotÀ» Ã£¾Æ À§Ä¡¸¦ Á¶Á¤ÇÕ´Ï´Ù.
+				// VerticalBoxï¿½ï¿½ CanvasPanelSlotï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 				UVerticalBox* MyVerticalBox = Cast<UVerticalBox>(PlayerHealthBar->GetWidgetFromName(TEXT("MyVerticalBox")));
 				if (MyVerticalBox)
 				{
@@ -311,7 +311,7 @@ void AITTCharacter::CreateHealthBar()
 	}
 }
 
-//Ã¼·Â ¹× ½ºÅÂ¹Ì³ª °ü¸®
+//Ã¼ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Â¹Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½
 void AITTCharacter::UpdateHealth()
 {
 	CurrentHealth = FMath::Clamp(CurrentHealth, 0.f, MaxHealth);
@@ -333,19 +333,19 @@ void AITTCharacter::UpdateStamina()
 
 	if (PlayerHealthBar)
 	{
-		UProgressBar* StaminaBar = Cast<UProgressBar>(PlayerHealthBar->GetWidgetFromName(TEXT("ProgressBar_stamina"))); // ProgressBar_Stamina´Â ½ºÅÂ¹Ì³Ê ¹ÙÀÇ ÀÌ¸§ÀÔ´Ï´Ù.
+		UProgressBar* StaminaBar = Cast<UProgressBar>(PlayerHealthBar->GetWidgetFromName(TEXT("ProgressBar_stamina"))); // ProgressBar_Staminaï¿½ï¿½ ï¿½ï¿½ï¿½Â¹Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½Ô´Ï´ï¿½.
 		if (StaminaBar)
 		{
 			StaminaBar->SetPercent(CurrentStamina / MaxStamina);
 
 			if (CurrentStamina <= 1.0f)
 			{
-				FLinearColor NewColor = FLinearColor(1.0f, 0.0f, 0.0f, 1.0f); // RGB »ö»ó ÄÚµå + ¾ËÆÄ(Åõ¸íµµ) °ª
+				FLinearColor NewColor = FLinearColor(1.0f, 0.0f, 0.0f, 1.0f); // RGB ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ + ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½) ï¿½ï¿½
 				StaminaBar->SetFillColorAndOpacity(NewColor);
 			}
 			if (CurrentStamina > 1.0f)
 			{
-				FLinearColor NewColor = FLinearColor(0.5f, 1.0f, 0.27f, 1.0f); // RGB »ö»ó ÄÚµå + ¾ËÆÄ(Åõ¸íµµ) °ª
+				FLinearColor NewColor = FLinearColor(0.5f, 1.0f, 0.27f, 1.0f); // RGB ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ + ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½) ï¿½ï¿½
 				StaminaBar->SetFillColorAndOpacity(NewColor);
 			}
 		}
@@ -355,16 +355,16 @@ void AITTCharacter::UpdateStamina()
 void AITTCharacter::DecreaseStamina(float StaminaAmount)
 {
 
-	CurrentStamina -= StaminaAmount; // ¿¹: ´Ş¸®±â·Î ÀÎÇÑ ½ºÅÂ¹Ì³Ê °¨¼Ò
+	CurrentStamina -= StaminaAmount; // ï¿½ï¿½: ï¿½Ş¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¹Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if (CurrentStamina <= 0.2)
 	{
 		CurrentStamina = 0;
 		bIsStaminaDepleted = true;
-		StopRunning(); // ½ºÅÂ¹Ì³Ê°¡ ´Ù ¼ÒÁøµÇ¸é ´Ş¸®±â ÁßÁö
-		// ½½·Î¿ì »óÅÂ·Î ÀüÈ¯
+		StopRunning(); // ï¿½ï¿½ï¿½Â¹Ì³Ê°ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸ï¿½ ï¿½Ş¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		// ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½Â·ï¿½ ï¿½ï¿½È¯
 		if (UCharacterMovementComponent* CharMovement = GetCharacterMovement())
 		{
-			CharMovement->MaxWalkSpeed /= 2; // ÀÌµ¿ ¼Óµµ¸¦ Àı¹İÀ¸·Î ÁÙÀÓ
+			CharMovement->MaxWalkSpeed /= 2; // ï¿½Ìµï¿½ ï¿½Óµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		}
 		GetWorld()->GetTimerManager().SetTimer(SlowStateTimer, this, &AITTCharacter::RestoreWalkSpeed, SlowDuration, false);
 	}
@@ -391,7 +391,7 @@ void AITTCharacter::RestoreWalkSpeed()
 	{
 		if (bIsStaminaDepleted && CurrentStamina >= 1)
 		{
-			CharMovement->MaxWalkSpeed *= 2; // ÀÌµ¿ ¼Óµµ¸¦ ¿ø·¡´ë·Î º¹±¸
+			CharMovement->MaxWalkSpeed *= 2; // ï¿½Ìµï¿½ ï¿½Óµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			bIsStaminaDepleted = false;
 		}
 	}
@@ -419,15 +419,15 @@ float AITTCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& D
 	return ActualDamage;
 }
 
-//´Ş¸®±â ¹× »óÈ£ÀÛ¿ë
+//ï¿½Ş¸ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½È£ï¿½Û¿ï¿½
 
 void AITTCharacter::StartRunning()
 {
 	if (CurrentStamina > 0 && !bIsRunning && !bIsStaminaDepleted)
 	{
 		bIsRunning = true;
-		GetCharacterMovement()->MaxWalkSpeed = 600.0f; // ÀÌµ¿ ¼Óµµ Áõ°¡
-		// ´Ş¸®±â ½ÃÀÛÇÒ ¶§ ½ºÅÂ¹Ì³Ê °¨¼Ò ½ÃÀÛ
+		GetCharacterMovement()->MaxWalkSpeed = 600.0f; // ï¿½Ìµï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½
+		// ï¿½Ş¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Â¹Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		GetWorld()->GetTimerManager().SetTimer(StaminaDecreaseStaminaForRunning, this, &AITTCharacter::DecreaseStaminaRunning, 0.1f, true);
 	}
 }
@@ -437,8 +437,8 @@ void AITTCharacter::StopRunning()
 	if (bIsRunning)
 	{
 		bIsRunning = false;
-		GetCharacterMovement()->MaxWalkSpeed = 250.0f; // ÀÌµ¿ ¼Óµµ º¹¿ø
-		// ´Ş¸®±â ÁßÁö ½Ã ½ºÅÂ¹Ì³Ê °¨¼Ò ÁßÁö
+		GetCharacterMovement()->MaxWalkSpeed = 250.0f; // ï¿½Ìµï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½
+		// ï¿½Ş¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Â¹Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		GetWorld()->GetTimerManager().ClearTimer(StaminaDecreaseStaminaForRunning);
 	}
 }
@@ -459,16 +459,28 @@ void AITTCharacter::Interactive()
 
 void AITTCharacter::IncreaseMovementSpeed()
 {
-
+	UCharacterMovementComponent* MovementComp = GetCharacterMovement();
+	if (MovementComp && !bIsSpeedBoosted) // ì†ë„ ì¦ê°€ê°€ ì´ë¯¸ ì ìš©ëœ ìƒíƒœê°€ ì•„ë‹Œ ê²½ìš°ì—ë§Œ ì‹¤í–‰
+	{
+		MovementComp->MaxWalkSpeed = 1.5f;  // ì´ë™ ì†ë„ ì¦ê°€
+		MovementComp->JumpZVelocity = 1.5f; // ì í”„ ì†ë„ ì¦ê°€
+		bIsSpeedBoosted = true;
+	}
 }
 void AITTCharacter::ResetMovementSpeed()
 {
-	
+	UCharacterMovementComponent* MovementComp = GetCharacterMovement();
+	if (MovementComp && bIsSpeedBoosted)
+	{
+		MovementComp->MaxWalkSpeed /= 1.5f;  // ì´ë™ ì†ë„ ì›ìƒ ë³µê·€
+		MovementComp->JumpZVelocity /= 1.5f; // ì í”„ ì†ë„ ì›ìƒ ë³µê·€
+		bIsSpeedBoosted = false;
+	}
 }
 
 void AITTCharacter::PlayHealingSound_Implementation()
 {
-	// ¿©±â¿¡ ±âº» ±¸Çö Ãß°¡
+	// ï¿½ï¿½ï¿½â¿¡ ï¿½âº» ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
 }
 
 void AITTCharacter::PlayRespawnUI_Implementation()
@@ -476,12 +488,12 @@ void AITTCharacter::PlayRespawnUI_Implementation()
 
 }
 
-//ÇÃ·¹ÀÌ¾î Á×À½ Ã³¸®
+//ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
 void AITTCharacter::Die()
 {
-	// Ä³¸¯ÅÍÀÇ Á×À½ Ã³¸® ·ÎÁ÷
+	// Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-	// °ÔÀÓ ¸ğµå¿¡ Á×À½ ¾Ë¸®±â
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½å¿¡ ï¿½ï¿½ï¿½ï¿½ ï¿½Ë¸ï¿½ï¿½ï¿½
 	ADontForgetMeGameModeBase* GM = Cast<ADontForgetMeGameModeBase>(UGameplayStatics::GetGameMode(this));
 	if (GM != nullptr)
 	{

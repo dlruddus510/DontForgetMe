@@ -36,10 +36,10 @@ public:
 		float TurnRateGamepad;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Health")
-		float MaxHealth = 5.0f;	// ÃÖ´ë Ã¼·ÂÀ» À§ÇÑ º¯¼ö
+		float MaxHealth = 5.0f;	// ï¿½Ö´ï¿½ Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Health")
-		float CurrentHealth; // ÇöÀç Ã¼·Â
+		float CurrentHealth; // ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stamina")
 		float CurrentStamina;
@@ -53,38 +53,40 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character")
 		ECharacterType SelectedCharacterType;
 
-	// UI À§Á¬ Å¬·¡½ºÀÇ ÂüÁ¶
+	// UI ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 		TSubclassOf<UUserWidget> PlayerHealthBarClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 		TSubclassOf<UUserWidget> PlayerRespawnClass;
 
-	// UI À§Á¬ ÀÎ½ºÅÏ½º
+	// UI ï¿½ï¿½ï¿½ï¿½ ï¿½Î½ï¿½ï¿½Ï½ï¿½
 	UPROPERTY()
 		UUserWidget* PlayerHealthBar;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI")
 		UUserWidget* PlayerRespawn;
 
-	FTimerHandle SlowStateTimer; //½½·Î¿ì ½Ã°£ Å¸ÀÌ¸ÓÇÚµé
+	FTimerHandle SlowStateTimer; //ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½Ã°ï¿½ Å¸ï¿½Ì¸ï¿½ï¿½Úµï¿½
 
 	UFUNCTION()
-		// Ã¼·Â ¾÷µ¥ÀÌÆ® ÇÔ¼ö
+		// Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ô¼ï¿½
 		void UpdateHealth();
 
 	UFUNCTION()
 		void UpdateStamina();
 
 
-	// ½ºÅÂ¹Ì³Ê È¸º¹ °ü·Ã º¯¼ö
-	const float StaminaRecoveryRate = 0.2f; //5ÃÊ¿¡ 1È¸º¹
+	// ï¿½ï¿½ï¿½Â¹Ì³ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	const float StaminaRecoveryRate = 0.2f; //5ï¿½Ê¿ï¿½ 1È¸ï¿½ï¿½
 
-	const float SlowStaminaRecoveryRate = 0.1f; //10ÃÊ¿¡ 1È¸º¹
+	const float SlowStaminaRecoveryRate = 0.1f; //10ï¿½Ê¿ï¿½ 1È¸ï¿½ï¿½
 
 	bool bIsStaminaDepleted;
 
-	// ½ºÅÂ¹Ì³Ê È¸º¹ ÇÔ¼ö
+	bool bIsSpeedBoosted = false;
+
+	// ï¿½ï¿½ï¿½Â¹Ì³ï¿½ È¸ï¿½ï¿½ ï¿½Ô¼ï¿½
 	UFUNCTION()
 		void RecoverStamina(float DeltaTime);
 
@@ -99,9 +101,9 @@ public:
 		void PlayRespawnUI();
 	virtual void PlayRespawnUI_Implementation();
 
-	void RestoreWalkSpeed(); // ÀÌµ¿ ¼Óµµ¸¦ ¿ø·¡´ë·Î º¹±¸ÇÏ´Â ÇÔ¼ö
+	void RestoreWalkSpeed(); // ï¿½Ìµï¿½ ï¿½Óµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
 
-	// »ç¸Á Ã³¸® ÇÔ¼ö
+	// ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½Ô¼ï¿½
 	void Die();
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Run")
 	bool bIsRunning = false;
@@ -110,7 +112,7 @@ public:
 
 
 protected:
-	//===============º¯¼ö===============
+	//===============ï¿½ï¿½ï¿½ï¿½===============
 	FHitResult OutHit;
 
 	FCollisionQueryParams QueryParams;
@@ -119,14 +121,14 @@ protected:
 
 	AActor* AttachedActor;
 
-	FCollisionShape LocalCollisionShape; //Ãæµ¹¹üÀ§
+	FCollisionShape LocalCollisionShape; //ï¿½æµ¹ï¿½ï¿½ï¿½ï¿½
 
 	ACharacter* MyCharacter;
 
-	// Á×À½ È½¼ö¸¦ ÃßÀûÇÏ´Â º¯¼ö
+	// ï¿½ï¿½ï¿½ï¿½ È½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½
 	int32 DeathCount = 0;
 
-	FVector TargetLocation; // ÀÌµ¿ ¸ñÇ¥ À§Ä¡
+	FVector TargetLocation; // ï¿½Ìµï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½Ä¡
 
 	bool bIsStaminaRecovering;
 
@@ -140,12 +142,12 @@ protected:
 
 	FTimerHandle StaminaRecoveryTimer;
 
-	const float SlowDuration = 10.0f; //½½·Î¿ì »óÅÂ ½Ã°£
+	const float SlowDuration = 10.0f; //ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½
 
 	//float StaminaAmount;
 
 
-	//===============ÇÔ¼ö===============
+	//===============ï¿½Ô¼ï¿½===============
 
 	void CheckIfPossessed();
 
@@ -165,11 +167,11 @@ protected:
 
 	//void CheckStaminaStatus();
 
-	void CheckForController(); //ÄÁÆ®·Ñ·¯ ÇÒ´ç È®ÀÎ ÇÔ¼ö
+	void CheckForController(); //ï¿½ï¿½Æ®ï¿½Ñ·ï¿½ ï¿½Ò´ï¿½ È®ï¿½ï¿½ ï¿½Ô¼ï¿½
 
-	void CreateHealthBar(); //Ã¼·Â¹Ù »ý¼º ÇÔ¼ö
+	void CreateHealthBar(); //Ã¼ï¿½Â¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
 
-	void Interactive(); //»óÈ£ÀÛ¿ë
+	void Interactive(); //ï¿½ï¿½È£ï¿½Û¿ï¿½
 
 	bool CheckForObjectsInChannel(FVector StartLocation, FVector EndLocation, ECollisionChannel CollisionChannel, FCollisionShape CollisionShape);
 
@@ -197,7 +199,7 @@ protected:
 	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
-	FVector GetForwardLocation(float Distance); //Á¤¸é ½ÃÁ¡ °è»ê
+	FVector GetForwardLocation(float Distance); //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 
 protected:
 	// APawn interface
