@@ -462,8 +462,8 @@ void AITTCharacter::IncreaseMovementSpeed()
 	UCharacterMovementComponent* MovementComp = GetCharacterMovement();
 	if (MovementComp && !bIsSpeedBoosted) // 속도 증가가 이미 적용된 상태가 아닌 경우에만 실행
 	{
-		MovementComp->MaxWalkSpeed = 1.5f;  // 이동 속도 증가
-		MovementComp->JumpZVelocity = 1.5f; // 점프 속도 증가
+		MovementComp->MaxWalkSpeed *= 1.5f;  // 이동 속도 증가
+		MovementComp->JumpZVelocity *= 1.5f; // 점프 속도 증가
 		bIsSpeedBoosted = true;
 	}
 }
