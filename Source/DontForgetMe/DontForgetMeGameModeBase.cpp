@@ -62,7 +62,10 @@ void ADontForgetMeGameModeBase::RespawnPlayer(AController* PlayerController, TSu
         {
             SpawnLocation = ITTCharacter->CheckPoint;
 
-            AITTCharacter* NewCharacter = GetWorld()->SpawnActor<AITTCharacter>(RespawnCharacterClassLocal, SpawnLocation, SpawnRotation);
+            FActorSpawnParameters SpawnParameters;
+            SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+            AITTCharacter* NewCharacter = GetWorld()->SpawnActor<AITTCharacter>(RespawnCharacterClassLocal, SpawnLocation, SpawnRotation, SpawnParameters);
             if (NewCharacter != nullptr)
             {
                 NewCharacter->MaxHealth = 5.0f;
@@ -71,6 +74,14 @@ void ADontForgetMeGameModeBase::RespawnPlayer(AController* PlayerController, TSu
                 NewCharacter->UpdateHealth();
                 UE_LOG(LogTemp, Error, TEXT("Respawn: Successfully respawned a character.")); // 부활 성공 시 로그
             }
+            else
+            {
+                UE_LOG(LogTemp, Error, TEXT("NewCharacter no")); // 부활 성공 시 로그
+            }
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("ITTCharacter no")); // 부활 성공 시 로그
         }
     }
 }
