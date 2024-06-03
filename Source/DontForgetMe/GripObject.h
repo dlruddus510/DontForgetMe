@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -14,15 +13,15 @@ class DONTFORGETME_API AGripObject : public AActor, public IInterfaceGrip
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
+
 	AGripObject();
 
 protected:
-	// Called when the game starts or when spawned
+
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
+
 	virtual void Tick(float DeltaTime) override;
 
 	AActor* TargetActor;
@@ -33,8 +32,7 @@ public:
 	void BeginMoveToTarget(AActor* NewTargetActor, FVector NewTargetLocation);
 	void StopMoveToTarget();
 
-	/*UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
-		UStaticMeshComponent* StaticMeshComp;*/
+
 
 	UFUNCTION(BlueprintNativeEvent, Category = "InterfaceAction")
 	void Grip();

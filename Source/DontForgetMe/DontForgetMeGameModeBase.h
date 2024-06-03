@@ -1,4 +1,3 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -12,9 +11,7 @@
 #include "Camera/CameraActor.h"
 #include "DontForgetMeGameModeBase.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class DONTFORGETME_API ADontForgetMeGameModeBase : public AGameModeBase
 {
@@ -23,14 +20,14 @@ class DONTFORGETME_API ADontForgetMeGameModeBase : public AGameModeBase
 public:
 	void PlayerDied(AController* LostPlayerController);
 
-	// 플레이어를 부활시키는 함수
+
 	void RespawnPlayer(AController* PlayerController, TSubclassOf<AITTCharacter> RespawnCharacterClass);
 
 	UClass* RespawnCharacterClass;
 
 	AITTCharacter* ITTCharacter;
 
-	// 플레이어의 부활 카운트를 저장하는 맵
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Respawn")
 	TMap<AController*, int32> RespawnCounts;
 
@@ -44,7 +41,7 @@ public:
 	int32 RespawnTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Respawn")
-	TMap<AController*, FTimerHandle> PlayerTimerHandles; // 추가: 플레이어마다 다른 타이머 핸들 저장
+	TMap<AController*, FTimerHandle> PlayerTimerHandles; 
 
 		TMap<AController*, TWeakObjectPtr<UUserWidget>> PlayerRespawnMap;
 
@@ -57,5 +54,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Respawn")
 		TSubclassOf<AITTCharacter> RobotCharacterClass;
 
-	void HideRespawnUI(AController* PlayerController); // 추가: 플레이어마다 다른 UI 숨기기
+	void HideRespawnUI(AController* PlayerController); 
 };

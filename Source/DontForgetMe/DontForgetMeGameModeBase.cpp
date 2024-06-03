@@ -6,11 +6,9 @@ void ADontForgetMeGameModeBase::PlayerDied(AController* PlayerController)
 {
     if (PlayerController != nullptr)
     {
-        // ��Ȱ ī��Ʈ ����
         int32& Count = RespawnCounts.FindOrAdd(PlayerController);
         Count++;
 
-        // ��Ȱ ��� �ð� ���
         float RespawnTimeLocal = FMath::Min(Count * 5.0f, 30.0f);
         TSubclassOf<AITTCharacter> RespawnCharacterClassLocal = nullptr;
         APawn* ControlledPawn = PlayerController->GetPawn();
@@ -32,18 +30,17 @@ void ADontForgetMeGameModeBase::PlayerDied(AController* PlayerController)
                     break;
                 }
 
-                // �� �÷��̾ ���� UI ����
                 ITTCharacter->PlayRespawnUI();
 
                 ITTCharacter->Destroy();
             }
         }
 
-        // �÷��̾ ���� UI�� PlayerRespawnMap�� ����
+
         TWeakObjectPtr<UUserWidget>& PlayerRespawn = PlayerRespawnMap.FindOrAdd(PlayerController);
         PlayerRespawn = ITTCharacter->PlayerRespawn;
 
-        // ��Ȱ ����
+
         FTimerHandle& PlayerTimerHandle = PlayerTimerHandles.FindOrAdd(PlayerController);
         GetWorld()->GetTimerManager().SetTimer(PlayerTimerHandle, [this, PlayerController, RespawnCharacterClassLocal]() {
             RespawnPlayer(PlayerController, RespawnCharacterClassLocal);
@@ -69,10 +66,10 @@ void ADontForgetMeGameModeBase::RespawnPlayer(AController* PlayerController, TSu
             if (NewCharacter != nullptr)
             {
                 NewCharacter->MaxHealth = 5.0f;
-                NewCharacter->CurrentHealth = 5.0f; // ��Ȱ�� ĳ������ ü���� 5�� ����
+                NewCharacter->CurrentHealth = 5.0f; 
                 PlayerController->Possess(NewCharacter);
                 NewCharacter->UpdateHealth();
-                UE_LOG(LogTemp, Error, TEXT("Respawn: Successfully respawned a character.")); // ��Ȱ ���� �� �α�
+                UE_LOG(LogTemp, Error, TEXT("Respawn: Successfully respawned a character."));
             }
         }
     }
@@ -90,7 +87,7 @@ float ADontForgetMeGameModeBase::GetRemainingTime(AController* PlayerController)
 
 void ADontForgetMeGameModeBase::HideRespawnUI(AController* PlayerController)
 {
-    // �÷��̾ UI �����
+
     TWeakObjectPtr<UUserWidget>* PlayerRespawnPtr = PlayerRespawnMap.Find(PlayerController);
     if (PlayerRespawnPtr != nullptr && PlayerRespawnPtr->IsValid())
     {

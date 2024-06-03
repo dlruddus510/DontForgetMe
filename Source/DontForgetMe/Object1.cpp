@@ -8,7 +8,6 @@
 #include "Materials/MaterialInterface.h"
 #include "TimerManager.h"
 
-// Sets default values
 AObject1::AObject1()
 {
     PrimaryActorTick.bCanEverTick = true;
@@ -32,12 +31,11 @@ AObject1::AObject1()
     OriginalMaterial = nullptr;
 }
 
-// Called when the game starts or when spawned
 void AObject1::BeginPlay()
 {
     Super::BeginPlay();
     InitialLocation = GetActorLocation();
-    TargetLocation = InitialLocation - FVector(MoveDistance, 0.0f, 0.0f); // 뒤로 이동하도록 목표 위치 설정
+    TargetLocation = InitialLocation - FVector(MoveDistance, 0.0f, 0.0f); 
 
     if (MeshComp->GetMaterial(0))
     {
@@ -50,14 +48,13 @@ void AObject1::BeginPlay()
     }
 }
 
-// Called every frame
 void AObject1::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
     if (bIsMoving)
     {
-        FVector BackwardVector = FVector(-1.0f, 0.0f, 0.0f); // 뒤로 이동
+        FVector BackwardVector = FVector(-1.0f, 0.0f, 0.0f);
         FVector NewLocation = GetActorLocation() + (BackwardVector * MoveSpeed * DeltaTime);
 
         if (FVector::Dist(InitialLocation, NewLocation) < MoveDistance)
@@ -74,10 +71,9 @@ void AObject1::Tick(float DeltaTime)
         {
             bIsMoving = false;
 
-            // Set timer to start return movement after 3 seconds
+
             GetWorld()->GetTimerManager().SetTimer(ReturnTimerHandle, this, &AObject1::StartReturnMovement, 3.0f, false);
 
-            // Set timer to reset the material after 3 seconds
             GetWorld()->GetTimerManager().SetTimer(MaterialTimerHandle, this, &AObject1::ResetMaterial, 2.9f, false);
         }
     }
@@ -116,7 +112,7 @@ void AObject1::StartReturnMovement()
 
 void AObject1::ReturnObjects(float DeltaTime)
 {
-    FVector ForwardVector = FVector(1.0f, 0.0f, 0.0f); // 앞으로 이동
+    FVector ForwardVector = FVector(1.0f, 0.0f, 0.0f);
     FVector NewLocation = GetActorLocation() + (ForwardVector * MoveSpeed * DeltaTime);
 
     if (FVector::Dist(TargetLocation, NewLocation) < MoveDistance)

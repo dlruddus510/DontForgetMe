@@ -1,4 +1,3 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -21,25 +20,17 @@ class AITTCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-	//	/** Camera boom positioning the camera behind the character */
-	/*	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class USpringArmComponent* CameraBoom;
-
-	///** Follow camera */
-	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class UCameraComponent* FollowCamera;*/
 public:
 	AITTCharacter();
 
-	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Input)
 		float TurnRateGamepad;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Health")
-		float MaxHealth = 5.0f;	// �ִ� ü���� ���� ����
+		float MaxHealth = 5.0f;	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Health")
-		float CurrentHealth; // ���� ü��
+		float CurrentHealth;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stamina")
 		float CurrentStamina;
@@ -53,40 +44,40 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character")
 		ECharacterType SelectedCharacterType;
 
-	// UI ���� Ŭ������ ����
+
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 		TSubclassOf<UUserWidget> PlayerHealthBarClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 		TSubclassOf<UUserWidget> PlayerRespawnClass;
 
-	// UI ���� �ν��Ͻ�
+
 	UPROPERTY()
 		UUserWidget* PlayerHealthBar;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI")
 		UUserWidget* PlayerRespawn;
 
-	FTimerHandle SlowStateTimer; //���ο� �ð� Ÿ�̸��ڵ�
+	FTimerHandle SlowStateTimer; 
 
 	UFUNCTION()
-		// ü�� ������Ʈ �Լ�
+
 		void UpdateHealth();
 
 	UFUNCTION()
 		void UpdateStamina();
 
 
-	// ���¹̳� ȸ�� ���� ����
-	const float StaminaRecoveryRate = 0.2f; //5�ʿ� 1ȸ��
 
-	const float SlowStaminaRecoveryRate = 0.1f; //10�ʿ� 1ȸ��
+	const float StaminaRecoveryRate = 0.2f; 
+
+	const float SlowStaminaRecoveryRate = 0.1f; 
 
 	bool bIsStaminaDepleted;
 
 	bool bIsSpeedBoosted = false;
 
-	// ���¹̳� ȸ�� �Լ�
+
 	UFUNCTION()
 		void RecoverStamina(float DeltaTime);
 
@@ -101,9 +92,9 @@ public:
 		void PlayRespawnUI();
 	virtual void PlayRespawnUI_Implementation();
 
-	void RestoreWalkSpeed(); // �̵� �ӵ��� ������� �����ϴ� �Լ�
+	void RestoreWalkSpeed();
 
-	// ��� ó�� �Լ�
+
 	void Die();
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Run")
 	bool bIsRunning = false;
@@ -112,7 +103,7 @@ public:
 
 
 protected:
-	//===============����===============
+
 	FHitResult OutHit;
 
 	FCollisionQueryParams QueryParams;
@@ -121,14 +112,14 @@ protected:
 
 	AActor* AttachedActor;
 
-	FCollisionShape LocalCollisionShape; //�浹����
+	FCollisionShape LocalCollisionShape;
 
 	ACharacter* MyCharacter;
 
-	// ���� Ƚ���� �����ϴ� ����
+
 	int32 DeathCount = 0;
 
-	FVector TargetLocation; // �̵� ��ǥ ��ġ
+	FVector TargetLocation; 
 
 	bool bIsStaminaRecovering;
 
@@ -142,22 +133,17 @@ protected:
 
 	FTimerHandle StaminaRecoveryTimer;
 
-	const float SlowDuration = 10.0f; //���ο� ���� �ð�
-
-	//float StaminaAmount;
+	const float SlowDuration = 10.0f; 
 
 
-	//===============�Լ�===============
 
 	void CheckIfPossessed();
 
-	//void SetStaminaRecovery(bool bSlowRecovery);
 
 	void StartRunning();
 
 	void StopRunning();
 
-	//void AdjustMovementSpeed();
 
 	void DecreaseStamina(float StaminaAmount);
 
@@ -165,56 +151,42 @@ protected:
 
 	void RecoverStamina();
 
-	//void CheckStaminaStatus();
 
-	void CheckForController(); //��Ʈ�ѷ� �Ҵ� Ȯ�� �Լ�
+	void CheckForController();
 
-	void CreateHealthBar(); //ü�¹� ���� �Լ�
+	void CreateHealthBar(); 
 
-	void Interactive(); //��ȣ�ۿ�
+	void Interactive(); 
 
 	bool CheckForObjectsInChannel(FVector StartLocation, FVector EndLocation, ECollisionChannel CollisionChannel, FCollisionShape CollisionShape);
 
-	/** Called for forwards/backward input */
+
 	void MoveForward(float Value);
 
-	/** Called for side to side input */
+
 	void MoveRight(float Value);
 
-	/**
-	 * Called via input to turn at a given rate.
-	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
-	 */
 	void TurnAtRate(float Rate);
 
-	/**
-	 * Called via input to turn look up/down at a given rate.
-	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
-	 */
 	void LookUpAtRate(float Rate);
 
-	/** Handler for when a touch input begins. */
 	void TouchStarted(ETouchIndex::Type FingerIndex, FVector Location);
 
-	/** Handler for when a touch input stops. */
 	void TouchStopped(ETouchIndex::Type FingerIndex, FVector Location);
 
-	FVector GetForwardLocation(float Distance); //���� ���� ���
+	FVector GetForwardLocation(float Distance); 
 
 protected:
-	// APawn interface
+
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void BeginPlay();
 
 	virtual void Tick(float DeltaTime) override;
-	// End of APawn interface
+
 
 public:
-	///** Returns CameraBoom subobject **/
-	/*FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	///** Returns FollowCamera subobject **/
-	//FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	
 	void IncreaseMovementSpeed();
 	void ResetMovementSpeed();
 };

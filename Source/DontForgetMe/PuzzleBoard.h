@@ -1,10 +1,9 @@
-// PuzzleBoard.h
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "PuzzleBlockComponent.h" // EPuzzleBlockShape를 사용하기 위해 퍼즐 블록 헤더를 포함시킴
+#include "PuzzleBlockComponent.h" 
 #include "PuzzleBoard.generated.h"
 
 UCLASS()
@@ -24,6 +23,6 @@ public:
         FRotator TargetRotation;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Puzzle")
-        EPuzzleBlockShape TargetShape; // EPuzzleBlockShape를 사용하여 TargetShape를 정의
+        EPuzzleBlockShape TargetShape; 
 
 };

@@ -1,4 +1,3 @@
-// PuzzleBlockComponent.h
 
 #pragma once
 
@@ -15,8 +14,7 @@ enum class EPuzzleBlockShape : uint8
    
 };
 
-class APuzzleBoard; // 전방 선언
-
+class APuzzleBoard; 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class DONTFORGETME_API UPuzzleBlockComponent : public UActorComponent
 {
@@ -40,7 +38,7 @@ protected:
     virtual void BeginPlay() override;
 
 public:
-    APuzzleBoard* OverlappingBoard; // 오버랩된 퍼즐보드를 가리키는 포인터 추가
+    APuzzleBoard* OverlappingBoard; 
 
 private:
     FVector InitialLocation;
@@ -57,5 +55,5 @@ private:
     void CheckIfShape();
 
     UFUNCTION()
-        void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult); // 오버랩 이벤트 핸들러 추가
+        void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };

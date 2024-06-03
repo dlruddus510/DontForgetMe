@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+
 
 #pragma once
 
@@ -27,20 +27,11 @@ protected:
 public:
     virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-    /*UPROPERTY(VisibleAnywhere, Category = "Platform")
-        class UStaticMeshComponent* PlatformMesh;*/
-
-        //UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
-        //    UBoxComponent* TriggerBox;
-
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
         ACameraActor* CameraToSwitchTo;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Test")
         int32 TestInt;
-
-    //UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Delay")
-    //FTimerHandle Delay;
 
     UFUNCTION(BlueprintCallable, Category = "ChangeCamera")
         void ChangeCamera();

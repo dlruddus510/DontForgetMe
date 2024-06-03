@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -12,9 +11,6 @@
 #include "ConductorInterface.h"
 #include "ConductorGripObject.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class DONTFORGETME_API AConductorGripObject : public AGripObject, public IConductorInterface
 {
@@ -28,7 +24,7 @@ public:
 
 	void Tick(float DeltaTime) override;
 
-	//UPROPERTY(BlueprintReadWrite, Category = "Electricity")
+
 	bool electricityStatus;
 
 	UParticleSystemComponent* PSC;
@@ -36,7 +32,7 @@ public:
 	FTimerHandle ParticleSystemDeactivationTimerHandle;
 
 	UPROPERTY(EditAnywhere, Category = "Effects")
-	UParticleSystem* ElectricEffect; // 전기 파티클 시스템에 대한 참조
+	UParticleSystem* ElectricEffect;
 
 	UFUNCTION(BlueprintCallable, Category = "Electricity")
 	virtual void ConductElectricity() override;
