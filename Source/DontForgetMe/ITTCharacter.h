@@ -52,7 +52,7 @@ public:
 		TSubclassOf<UUserWidget> PlayerRespawnClass;
 
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI")
 		UUserWidget* PlayerHealthBar;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI")

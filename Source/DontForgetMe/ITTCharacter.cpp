@@ -378,6 +378,16 @@ void AITTCharacter::CheckJumpStamina()
 
 float AITTCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
 {
+	if (DamageCauser == nullptr)
+	{
+		return 0.0f;
+	}
+
+	if (EventInstigator == nullptr)
+	{
+		return 0.0f;
+	}
+
 	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	CurrentHealth -= ActualDamage;
 
