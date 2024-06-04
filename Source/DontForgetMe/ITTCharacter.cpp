@@ -220,7 +220,7 @@ void AITTCharacter::CreateHealthBar()
 	auto PlayerController = Cast<APlayerController>(GetController());
 	FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(this, true);
 
-	if (PlayerController != nullptr && PlayerHealthBarClass != nullptr && CurrentLevelName != "Mainmenu")
+	if (PlayerController != nullptr && PlayerHealthBarClass != nullptr)
 	{
 		PlayerHealthBar = CreateWidget<UUserWidget>(PlayerController, PlayerHealthBarClass);
 		PlayerRespawn = CreateWidget<UUserWidget>(PlayerController, PlayerRespawnClass);
@@ -258,13 +258,13 @@ void AITTCharacter::CreateHealthBar()
 
 				if (CurrentPlayerId == LowestPlayerId)
 				{
-					NewX = (-(ViewportSize.X / 2.0f)) - 250;
+					NewX = 100.f;
 					UE_LOG(LogTemp, Error, TEXT("NewX : %f"), ViewportSize.X);
-					NewY = ViewportSize.Y - (ViewportSize.Y / 3.f);
+					NewY = 100.f;
 				}
 				else 
 				{
-					NewX = (ViewportSize.X / 2.0f) - 250; 
+					NewX = (ViewportSize.X / 2.0f); 
 					NewY = ViewportSize.Y - (ViewportSize.Y / 3.f);
 				}
 
@@ -378,15 +378,6 @@ void AITTCharacter::CheckJumpStamina()
 
 float AITTCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
 {
-	if (DamageCauser == nullptr)
-	{
-		return 0.0f;
-	}
-
-	if (EventInstigator == nullptr)
-	{
-		return 0.0f;
-	}
 
 	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	CurrentHealth -= ActualDamage;
