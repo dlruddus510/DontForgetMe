@@ -227,7 +227,7 @@ void AITTCharacter::CreateHealthBar()
 		if (PlayerHealthBar)
 		{
 			UE_LOG(LogTemp, Error, TEXT("PlayerHealthBar Suc"));
-			PlayerHealthBar->AddToViewport(0);
+			PlayerHealthBar->AddToViewport(-1);
 			PlayerHealthBar->SetVisibility(ESlateVisibility::Visible);
 			UE_LOG(LogTemp, Error, TEXT("Player ID: %d"), PlayerController->PlayerState ? PlayerController->PlayerState->GetPlayerId() : -1);
 
