@@ -1,7 +1,7 @@
+#include "UpDown.h"
 #include "Object1.h"
 #include "ITTCharacter.h"
 #include "Robot.h"
-#include "UpDown.h"
 #include "Components/StaticMeshComponent.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Engine/World.h"
