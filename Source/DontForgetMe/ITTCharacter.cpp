@@ -53,7 +53,7 @@ void AITTCharacter::BeginPlay()
 
 
 
-	CurrentStamina = MaxStamina;
+	CurrentStamina = MyMaxStamina;
 
 	bIsStaminaDepleted = false;
 	bIsRunning = false;
@@ -301,14 +301,14 @@ void AITTCharacter::UpdateHealth()
 
 void AITTCharacter::UpdateStamina()
 {
-	CurrentStamina = FMath::Clamp(CurrentStamina, 0.f, MaxStamina);
+	CurrentStamina = FMath::Clamp(CurrentStamina, 0.f, MyMaxStamina);
 
 	if (PlayerHealthBar)
 	{
 		UProgressBar* StaminaBar = Cast<UProgressBar>(PlayerHealthBar->GetWidgetFromName(TEXT("ProgressBar_stamina"))); 
 		if (StaminaBar)
 		{
-			StaminaBar->SetPercent(CurrentStamina / MaxStamina);
+			StaminaBar->SetPercent(CurrentStamina / MyMaxStamina);
 
 			if (CurrentStamina <= 1.0f)
 			{
@@ -348,11 +348,11 @@ void AITTCharacter::DecreaseStaminaRunning()
 
 void AITTCharacter::RecoverStamina(float DeltaTime)
 {
-	if (!bIsRunning && CurrentStamina < MaxStamina)
+	if (!bIsRunning && CurrentStamina < MyMaxStamina)
 	{
 		float RecoveryRate = bIsStaminaDepleted ? SlowStaminaRecoveryRate : StaminaRecoveryRate;
 		CurrentStamina += RecoveryRate * DeltaTime;
-		CurrentStamina = FMath::Min(CurrentStamina, MaxStamina);
+		CurrentStamina = FMath::Min(CurrentStamina, MyMaxStamina);
 	}
 }
 

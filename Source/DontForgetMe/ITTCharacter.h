@@ -36,7 +36,7 @@ public:
 		float CurrentStamina;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Stamina")
-		float MaxStamina = 10.0f;
+		float MyMaxStamina = 10.0f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "CheckPoint")
 		FVector CheckPoint;
