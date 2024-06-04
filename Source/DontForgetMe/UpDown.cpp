@@ -1,14 +1,11 @@
 #include "UpDown.h"
-#include "Object1.h"
-#include "ITTCharacter.h"
-#include "Robot.h"
 #include "Components/StaticMeshComponent.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Engine/World.h"
 #include "Materials/MaterialInterface.h"
 #include "TimerManager.h"
+#include "Robot.h"
 
-// Sets default values
 AUpDown::AUpDown()
 {
     PrimaryActorTick.bCanEverTick = true;
@@ -25,13 +22,16 @@ AUpDown::AUpDown()
 
     bIsMoving = false;
     bIsReturning = false;
+    bIsCooldown = false;
+
     MoveSpeed = 100.0f;
     MoveDistance = 250.0f;
 
     NewMaterial = nullptr;
+    NewMaterial2 = nullptr;
     OriginalMaterial = nullptr;
 
-    MoveDirection = FVector(1.0f, 0.0f, 0.0f); // 초기 이동 방향을 X축으로 설정
+    MoveDirection = FVector(0.0f, 0.0f, 0.0f);
 }
 
 // Called when the game starts or when spawned
@@ -44,6 +44,7 @@ void AUpDown::BeginPlay()
     if (MeshComp->GetMaterial(0))
     {
         OriginalMaterial = MeshComp->GetMaterial(0);
+
     }
 
     if (TargetObject2)
@@ -92,15 +93,27 @@ void AUpDown::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherA
 {
     UE_LOG(LogTemp, Warning, TEXT("Overlap Event Triggered with %s"), *OtherActor->GetName());
 
-    if (!bIsMoving && OtherActor && OtherActor->IsA(ARobot::StaticClass()))
+    if (!bIsMoving && !bIsCooldown && OtherActor && OtherActor->IsA(ARobot::StaticClass()))
     {
         bIsMoving = true;
+        bIsCooldown = true;
         InitialLocation = GetActorLocation();
 
         if (NewMaterial)
         {
             MeshComp->SetMaterial(0, NewMaterial);
+
+            if (TargetObject2)
+            {
+                UStaticMeshComponent* TargetMeshComp = Cast<UStaticMeshComponent>(TargetObject2->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+                if (TargetMeshComp)
+                {
+                    TargetMeshComp->SetMaterial(0, NewMaterial2);
+                }
+            }
         }
+
+        GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &AUpDown::ResetCooldown, 5.0f, false);
     }
 }
 
@@ -150,12 +163,26 @@ void AUpDown::ResetMaterial()
     if (OriginalMaterial)
     {
         MeshComp->SetMaterial(0, OriginalMaterial);
+
+        if (TargetObject2)
+        {
+            UStaticMeshComponent* TargetMeshComp = Cast<UStaticMeshComponent>(TargetObject2->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+            if (TargetMeshComp)
+            {
+                TargetMeshComp->SetMaterial(0, OriginalMaterial);
+            }
+        }
     }
 }
 
-// 이동 방향을 설정하는 함수 추가
+
 void AUpDown::SetMoveDirection(FVector NewDirection)
 {
-    MoveDirection = NewDirection.GetSafeNormal(); // 방향 벡터를 단위 벡터로 정규화
+    MoveDirection = NewDirection.GetSafeNormal();
     TargetLocation = InitialLocation + (MoveDirection * MoveDistance);
+}
+
+void AUpDown::ResetCooldown()
+{
+    bIsCooldown = false;
 }

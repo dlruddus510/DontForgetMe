@@ -10,58 +10,61 @@ class DONTFORGETME_API AUpDown : public AActor
     GENERATED_BODY()
 
 public:
-    // Sets default values for this actor's properties
     AUpDown();
 
 protected:
-    // Called when the game starts or when spawned
     virtual void BeginPlay() override;
 
 public:
-    // Called every frame
     virtual void Tick(float DeltaTime) override;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-        UStaticMeshComponent* MeshComp;
+    UStaticMeshComponent* MeshComp;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-        float MoveSpeed;
+    float MoveSpeed;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-        float MoveDistance;
+    float MoveDistance;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-        FVector MoveDirection;
+    FVector MoveDirection;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Material")
+    UMaterialInterface* NewMaterial;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Material")
+    UMaterialInterface* OriginalMaterial;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Material")
+    UMaterialInterface* NewMaterial2;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Target")
-        AActor* TargetObject2;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Materials")
-        UMaterialInterface* NewMaterial;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Materials")
-        UMaterialInterface* OriginalMaterial;
-
-    UFUNCTION()
-        void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-    UFUNCTION(BlueprintCallable, Category = "Movement")
-        void MoveObjects();
-
-    UFUNCTION(BlueprintCallable, Category = "Movement")
-        void SetMoveDirection(FVector NewDirection);
+    AActor* TargetObject2;
 
 private:
-    bool bIsMoving;
-    bool bIsReturning;
     FVector InitialLocation;
     FVector TargetLocation;
     FVector Object2InitialLocation;
+
+    bool bIsMoving;
+    bool bIsReturning;
+    bool bIsCooldown;
+
     FTimerHandle ReturnTimerHandle;
     FTimerHandle MaterialTimerHandle;
+    FTimerHandle CooldownTimerHandle;
 
+    void MoveObjects();
     void StartReturnMovement();
     void ReturnObjects(float DeltaTime);
     void ResetObjects();
     void ResetMaterial();
+    void ResetCooldown();
+
+    UFUNCTION()
+    void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+public:
+    void SetMoveDirection(FVector NewDirection);
 };
