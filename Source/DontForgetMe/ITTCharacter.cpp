@@ -8,6 +8,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PlayerState.h"
 #include "Blueprint/UserWidget.h"
+#include "Engine/UserInterfaceSettings.h"
 #include "TimerManager.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/VerticalBox.h"
@@ -251,21 +252,29 @@ void AITTCharacter::CreateHealthBar()
 
 
 			float NewX, NewY;
+			float ViewportScale = 1.333333f;
 			FVector2D ViewportSize;
 			if (GEngine && GEngine->GameViewport)
 			{
 				GEngine->GameViewport->GetViewportSize(ViewportSize);
 
+				ViewportScale = GetDefault<UUserInterfaceSettings>()->GetDPIScaleBasedOnSize(FIntPoint(ViewportSize.X, ViewportSize.Y));
+
+				ViewportSize.X /= ViewportScale;
+				ViewportSize.Y /= ViewportScale;
+
+				float UIWidth = 500.0f;
+				float UIHeight = 56.0f;
+
 				if (CurrentPlayerId == LowestPlayerId)
 				{
-					NewX = 100.f;
-					UE_LOG(LogTemp, Error, TEXT("NewX : %f"), ViewportSize.X);
-					NewY = 100.f;
+					NewX = ((ViewportSize.X / 4.0f) - (UIWidth / 2.0f));
+					NewY = (ViewportSize.Y * 0.8f) - (UIHeight * 0.5f);
 				}
 				else 
 				{
-					NewX = (ViewportSize.X / 2.0f); 
-					NewY = ViewportSize.Y - (ViewportSize.Y / 3.f);
+					NewX = ((3.0f * ViewportSize.X / 4.0f) - (UIWidth / 2.0f));
+					NewY = (ViewportSize.Y * 0.8f) - (UIHeight * 0.5f);
 				}
 
 				FVector2D NewPosition(NewX, NewY);
@@ -378,7 +387,15 @@ void AITTCharacter::CheckJumpStamina()
 
 float AITTCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
 {
+	if (DamageCauser == nullptr)
+	{
+		return 0.0f;
+	}
 
+	if (EventInstigator == nullptr)
+	{
+		return 0.0f;
+	}
 	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	CurrentHealth -= ActualDamage;
 
