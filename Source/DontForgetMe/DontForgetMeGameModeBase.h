@@ -37,6 +37,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Respawn")
 		float RemainingTime;
 
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Respawn")
 	int32 RespawnTime;
 

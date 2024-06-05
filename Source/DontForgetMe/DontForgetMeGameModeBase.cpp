@@ -51,25 +51,41 @@ void ADontForgetMeGameModeBase::PlayerDied(AController* PlayerController)
 
 void ADontForgetMeGameModeBase::RespawnPlayer(AController* PlayerController, TSubclassOf<AITTCharacter> RespawnCharacterClassLocal)
 {
-    if (PlayerController != nullptr)
+    bool bShouldRespawn = false;
+    for (int32 PlayerIndex = 0; PlayerIndex <= 1; ++PlayerIndex)
     {
-        FVector SpawnLocation = FVector::ZeroVector;
-        FRotator SpawnRotation = FRotator::ZeroRotator;
-        if (ITTCharacter)
+        APlayerController* TempPlayerController = UGameplayStatics::GetPlayerController(this, PlayerIndex);
+        if (TempPlayerController != nullptr && PlayerController != nullptr)
         {
-            SpawnLocation = ITTCharacter->CheckPoint;
-            FActorSpawnParameters SpawnParameters;
-            SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-
-            AITTCharacter* NewCharacter = GetWorld()->SpawnActor<AITTCharacter>(RespawnCharacterClassLocal, SpawnLocation, SpawnRotation, SpawnParameters);
-           
-            if (NewCharacter != nullptr)
+            if (TempPlayerController == PlayerController)
             {
-                NewCharacter->MaxHealth = 5.0f;
-                NewCharacter->CurrentHealth = 5.0f; 
-                PlayerController->Possess(NewCharacter);
-                NewCharacter->UpdateHealth();
-                UE_LOG(LogTemp, Error, TEXT("Respawn: Successfully respawned a character."));
+                bShouldRespawn = true;
+                break;
+            }
+        }
+    }
+    if (bShouldRespawn)
+    {
+        if (PlayerController != nullptr)
+        {
+            FVector SpawnLocation = FVector::ZeroVector;
+            FRotator SpawnRotation = FRotator::ZeroRotator;
+            if (ITTCharacter)
+            {
+                SpawnLocation = ITTCharacter->CheckPoint;
+                FActorSpawnParameters SpawnParameters;
+                SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+                AITTCharacter* NewCharacter = GetWorld()->SpawnActor<AITTCharacter>(RespawnCharacterClassLocal, SpawnLocation, SpawnRotation, SpawnParameters);
+
+                if (NewCharacter != nullptr)
+                {
+                    NewCharacter->MaxHealth = 5.0f;
+                    NewCharacter->CurrentHealth = 5.0f;
+                    PlayerController->Possess(NewCharacter);
+                    NewCharacter->UpdateHealth();
+                    UE_LOG(LogTemp, Error, TEXT("Respawn: Successfully respawned a character."));
+                }
             }
         }
     }
