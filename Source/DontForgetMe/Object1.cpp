@@ -8,7 +8,6 @@
 #include "Materials/MaterialInterface.h"
 #include "TimerManager.h"
 
-// Sets default values
 AObject1::AObject1()
 {
     PrimaryActorTick.bCanEverTick = true;
@@ -26,18 +25,17 @@ AObject1::AObject1()
     bIsMoving = false;
     bIsReturning = false;
     MoveSpeed = 100.0f;
-    MoveDistance = 100.0f;
+    MoveDistance = 250.0f;
 
     NewMaterial = nullptr;
     OriginalMaterial = nullptr;
 }
 
-// Called when the game starts or when spawned
 void AObject1::BeginPlay()
 {
     Super::BeginPlay();
     InitialLocation = GetActorLocation();
-    TargetLocation = InitialLocation + FVector(MoveDistance, 0.0f, 0.0f);
+    TargetLocation = InitialLocation - FVector(MoveDistance, 0.0f, 0.0f); 
 
     if (MeshComp->GetMaterial(0))
     {
@@ -50,15 +48,14 @@ void AObject1::BeginPlay()
     }
 }
 
-// Called every frame
 void AObject1::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
     if (bIsMoving)
     {
-        FVector ForwardVector = FVector(1.0f, 0.0f, 0.0f);
-        FVector NewLocation = GetActorLocation() + (ForwardVector * MoveSpeed * DeltaTime);
+        FVector BackwardVector = FVector(-1.0f, 0.0f, 0.0f);
+        FVector NewLocation = GetActorLocation() + (BackwardVector * MoveSpeed * DeltaTime);
 
         if (FVector::Dist(InitialLocation, NewLocation) < MoveDistance)
         {
@@ -66,7 +63,7 @@ void AObject1::Tick(float DeltaTime)
 
             if (TargetObject2)
             {
-                FVector TargetNewLocation = TargetObject2->GetActorLocation() + (ForwardVector * MoveSpeed * DeltaTime);
+                FVector TargetNewLocation = TargetObject2->GetActorLocation() + (BackwardVector * MoveSpeed * DeltaTime);
                 TargetObject2->SetActorLocation(TargetNewLocation);
             }
         }
@@ -74,10 +71,9 @@ void AObject1::Tick(float DeltaTime)
         {
             bIsMoving = false;
 
-            // Set timer to start return movement after 3 seconds
+
             GetWorld()->GetTimerManager().SetTimer(ReturnTimerHandle, this, &AObject1::StartReturnMovement, 3.0f, false);
 
-            // Set timer to reset the material after 3 seconds
             GetWorld()->GetTimerManager().SetTimer(MaterialTimerHandle, this, &AObject1::ResetMaterial, 2.9f, false);
         }
     }
@@ -116,8 +112,8 @@ void AObject1::StartReturnMovement()
 
 void AObject1::ReturnObjects(float DeltaTime)
 {
-    FVector BackwardVector = FVector(-1.0f, 0.0f, 0.0f);
-    FVector NewLocation = GetActorLocation() + (BackwardVector * MoveSpeed * DeltaTime);
+    FVector ForwardVector = FVector(1.0f, 0.0f, 0.0f);
+    FVector NewLocation = GetActorLocation() + (ForwardVector * MoveSpeed * DeltaTime);
 
     if (FVector::Dist(TargetLocation, NewLocation) < MoveDistance)
     {
@@ -125,7 +121,7 @@ void AObject1::ReturnObjects(float DeltaTime)
 
         if (TargetObject2)
         {
-            FVector TargetNewLocation = TargetObject2->GetActorLocation() + (BackwardVector * MoveSpeed * DeltaTime);
+            FVector TargetNewLocation = TargetObject2->GetActorLocation() + (ForwardVector * MoveSpeed * DeltaTime);
             TargetObject2->SetActorLocation(TargetNewLocation);
         }
     }

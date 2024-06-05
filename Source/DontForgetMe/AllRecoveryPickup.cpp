@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "AllRecoveryPickup.h"
 
@@ -10,12 +8,11 @@ void AAllRecoveryPickup::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AAc
     {
         if (Character->CurrentStamina != Character->MaxStamina || Character->CurrentHealth != Character->MaxHealth)
         {
-            
+            Character->PlayHealingSound();
             Character->CurrentHealth = Character->MaxHealth;
             Character->CurrentStamina = Character->MaxStamina;
             Character->RestoreWalkSpeed();
             GetWorld()->GetTimerManager().ClearTimer(Character->SlowStateTimer);
-            // Character->TakeDamage(0, FDamageEvent(), nullptr, nullptr);
             UE_LOG(LogTemp, Warning, TEXT("All Pickup"));
 
             Destroy();

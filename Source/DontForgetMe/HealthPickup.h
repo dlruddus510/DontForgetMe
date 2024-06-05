@@ -1,4 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,9 +5,7 @@
 #include "RecoveryPickup.h"
 #include "HealthPickup.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class DONTFORGETME_API AHealthPickup : public ARecoveryPickup
 {
