@@ -14,6 +14,7 @@
 #include "Components/VerticalBox.h"
 #include "Components/ProgressBar.h"
 #include "Kismet/GameplayStatics.h"
+#include "TimerManager.h"
 #include "DontForgetMeGameModeBase.h"
 
 
@@ -385,6 +386,32 @@ void AITTCharacter::CheckJumpStamina()
 	}
 }
 
+void AITTCharacter::ShowDamageWidget()
+{
+	if (DamageWidgetClass)
+	{
+		UUserWidget* DamageWidget = CreateWidget<UUserWidget>(GetWorld(), DamageWidgetClass);
+		if (DamageWidget)
+		{
+			DamageWidget->AddToViewport();
+
+			FTimerHandle TimerHandle;
+			GetWorldTimerManager().SetTimer(TimerHandle, this, &AITTCharacter::HideDamageWidget, 0.2f, false);
+
+			ActiveDamageWidget = DamageWidget; // Keep reference to widget for later removal
+		}
+	}
+}
+
+void AITTCharacter::HideDamageWidget()
+{
+	if (ActiveDamageWidget)
+	{
+		ActiveDamageWidget->RemoveFromViewport();
+		ActiveDamageWidget = nullptr;
+	}
+}
+
 float AITTCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
 {
 	if (DamageCauser == nullptr)
@@ -400,6 +427,8 @@ float AITTCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& D
 	CurrentHealth -= ActualDamage;
 
 	UpdateHealth();
+	ShowDamageWidget();
+
 	if (CurrentHealth <= 0.f)
 	{
 		Die();

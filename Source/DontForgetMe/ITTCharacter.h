@@ -101,6 +101,11 @@ public:
 
 	void CheckJumpStamina();
 
+	UFUNCTION()
+	void HideDamageWidget();
+
+	UFUNCTION()
+	void ShowDamageWidget();
 
 protected:
 
@@ -136,6 +141,12 @@ protected:
 	const float SlowDuration = 10.0f; 
 
 
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UUserWidget> DamageWidgetClass;
+
+	UPROPERTY()
+	UUserWidget* ActiveDamageWidget;
 
 	void CheckIfPossessed();
 
