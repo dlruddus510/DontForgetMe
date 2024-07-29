@@ -75,12 +75,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects", meta = (AllowPrivateAccess = "true"))
 		UNiagaraSystem* FootstepNiagaraSystem;
 
-	UPROPERTY(EditAnywhere, Category = "Particles")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects", meta = (AllowPrivateAccess = "true"))
+		UNiagaraSystem* WaterNiagaraSystem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Particles")
 		bool bSpawnParticlesOnlyWhenWalking;
+
+	float LastForwardInputValue;
+	float LastRightInputValue;
 
 	void SpawnFootstepParticles();
 
 	void SpawnPickupParticles();
+
+	UFUNCTION(BlueprintCallable, Category = "Particles")
+	void SpawnWaterParticles();
 	
 
 	const float StaminaRecoveryRate = 0.2f; 
