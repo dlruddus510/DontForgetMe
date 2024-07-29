@@ -528,7 +528,7 @@ void AITTCharacter::Die()
 	}
 }
 
-void AITTCharacter::SpawnFootstepParticles()
+void AITTCharacter::SpawnPickupParticles()
 {
 	if (NiagaraSystem)
 	{
@@ -567,4 +567,9 @@ void AITTCharacter::SpawnFootstepParticles()
 			}
 		}
 	}
+}
+
+void AITTCharacter::SpawnFootstepParticles()
+{
+
 }
