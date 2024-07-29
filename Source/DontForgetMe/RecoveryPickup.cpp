@@ -30,7 +30,7 @@ void ARecoveryPickup::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor
         AITTCharacter* Character = Cast<AITTCharacter>(OtherActor);
         if (Character)
         {
-            Character->SpawnFootstepParticles();
+            Character->SpawnPickupParticles();
         }
     }
 }
