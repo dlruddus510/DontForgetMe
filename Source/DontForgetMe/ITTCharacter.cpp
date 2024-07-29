@@ -42,7 +42,10 @@ AITTCharacter::AITTCharacter()
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
-	
+	LastForwardInputValue = 0.0f;
+	LastRightInputValue = 0.0f;
+	bSpawnParticlesOnlyWhenWalking = false;
+
 }
 
 void AITTCharacter::BeginPlay()
@@ -77,21 +80,8 @@ void AITTCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	RecoverStamina(DeltaTime);
-
 	UpdateHealth();
 	UpdateStamina();
-
-	//if (bSpawnParticlesOnlyWhenWalking)
-	//{
-	//	if (GetVelocity().Size() > 0) // Character is moving
-	//	{
-	//		SpawnFootstepParticles();
-	//	}
-	//}
-	//else
-	//{
-	//	SpawnFootstepParticles();
-	//}
 }
 
 
@@ -148,30 +138,39 @@ void AITTCharacter::LookUpAtRate(float Rate)
 
 void AITTCharacter::MoveForward(float Value)
 {
-	if ((Controller != nullptr) && (Value != 0.0f))
+	if (Controller != nullptr)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("MoveForward called with value: %f"), Value);
 
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 		AddMovementInput(Direction, Value);
+
+		LastForwardInputValue = Value;
+	}
+	else
+	{
+		LastForwardInputValue = 0.0f;
 	}
 }
 
 void AITTCharacter::MoveRight(float Value)
 {
-	if ((Controller != nullptr) && (Value != 0.0f))
+	if (Controller != nullptr)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("MoveRight called with value: %f"), Value);
 
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
 		AddMovementInput(Direction, Value);
+
+		LastRightInputValue = Value;
+	}
+	else
+	{
+		LastRightInputValue = 0.0f;
 	}
 }
 
@@ -572,4 +571,45 @@ void AITTCharacter::SpawnPickupParticles()
 void AITTCharacter::SpawnFootstepParticles()
 {
 
+}
+
+void AITTCharacter::SpawnWaterParticles()
+{
+	if (WaterNiagaraSystem)
+	{
+
+		FVector FootLocation = GetActorLocation();
+		FRotator Rotation = GetActorRotation();
+		FVector Scale = FVector(2.0f);
+		UWorld* World = GetWorld();
+		if (World)
+		{
+
+			UNiagaraComponent* NiagaraComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(
+				WaterNiagaraSystem,
+				GetRootComponent(),
+				NAME_None,
+				FVector::ZeroVector,
+				FRotator::ZeroRotator,
+				EAttachLocation::KeepRelativeOffset,
+				true,
+				true
+			);
+
+			if (NiagaraComponent)
+			{
+
+				NiagaraComponent->SetWorldScale3D(Scale);
+
+				FTimerHandle TimerHandle;
+				GetWorldTimerManager().SetTimer(TimerHandle, FTimerDelegate::CreateLambda([NiagaraComponent]()
+					{
+						if (NiagaraComponent)
+						{
+							NiagaraComponent->DestroyComponent();
+						}
+					}), 0.5f, false);
+			}
+		}
+	}
 }
