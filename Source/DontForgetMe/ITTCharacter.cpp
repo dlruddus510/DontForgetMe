@@ -532,14 +532,39 @@ void AITTCharacter::SpawnFootstepParticles()
 {
 	if (NiagaraSystem)
 	{
-		FVector FootLocation = GetActorLocation(); 
+		
+		FVector FootLocation = GetActorLocation();
 		FRotator Rotation = GetActorRotation();
-		FVector Scale = FVector(1.0f);
+		FVector Scale = FVector(2.0f);
 		UWorld* World = GetWorld();
 		if (World)
 		{
-			//UGameplayStatics::SpawnEmitterAtLocation(World, NiagaraComponent, FootLocation);
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, NiagaraSystem, FootLocation, Rotation, Scale);
+		
+			UNiagaraComponent* NiagaraComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(
+				NiagaraSystem,
+				GetRootComponent(), 
+				NAME_None,
+				FVector::ZeroVector, 
+				FRotator::ZeroRotator,
+				EAttachLocation::KeepRelativeOffset,
+				true,
+				true 
+			);
+
+			if (NiagaraComponent)
+			{
+			
+				NiagaraComponent->SetWorldScale3D(Scale);
+
+				FTimerHandle TimerHandle;
+				GetWorldTimerManager().SetTimer(TimerHandle, FTimerDelegate::CreateLambda([NiagaraComponent]()
+					{
+						if (NiagaraComponent)
+						{
+							NiagaraComponent->DestroyComponent();
+						}
+					}), 3.5f, false);
+			}
 		}
 	}
 }
