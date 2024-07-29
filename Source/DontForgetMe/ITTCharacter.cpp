@@ -80,6 +80,18 @@ void AITTCharacter::Tick(float DeltaTime)
 
 	UpdateHealth();
 	UpdateStamina();
+
+	//if (bSpawnParticlesOnlyWhenWalking)
+	//{
+	//	if (GetVelocity().Size() > 0) // Character is moving
+	//	{
+	//		SpawnFootstepParticles();
+	//	}
+	//}
+	//else
+	//{
+	//	SpawnFootstepParticles();
+	//}
 }
 
 
@@ -516,3 +528,18 @@ void AITTCharacter::Die()
 	}
 }
 
+void AITTCharacter::SpawnFootstepParticles()
+{
+	if (NiagaraSystem)
+	{
+		FVector FootLocation = GetActorLocation(); 
+		FRotator Rotation = GetActorRotation();
+		FVector Scale = FVector(1.0f);
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			//UGameplayStatics::SpawnEmitterAtLocation(World, NiagaraComponent, FootLocation);
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, NiagaraSystem, FootLocation, Rotation, Scale);
+		}
+	}
+}

@@ -5,6 +5,8 @@
 #include "InterfaceInteractable.h"
 #include "InterfaceGrip.h"
 #include "CheckPoint.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "GameFramework/Character.h"
 #include "ITTCharacter.generated.h"
 
@@ -67,7 +69,13 @@ public:
 	UFUNCTION()
 		void UpdateStamina();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects", meta = (AllowPrivateAccess = "true"))
+		UNiagaraSystem* NiagaraSystem;
 
+	UPROPERTY(EditAnywhere, Category = "Particles")
+		bool bSpawnParticlesOnlyWhenWalking;
+
+	void SpawnFootstepParticles();
 
 	const float StaminaRecoveryRate = 0.2f; 
 
